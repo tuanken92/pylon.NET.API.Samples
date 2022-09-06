@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32228.343
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceRemovalHandling", "DeviceRemovalHandling\DeviceRemovalHandling.csproj", "{BBE06407-87CC-4AE2-920D-A5DAC3C840A3}"
 EndProject
@@ -9,10 +9,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grab", "Grab\Grab.csproj", "{23523F59-9CC2-41A2-9527-EE39579588DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParametrizeCamera", "ParametrizeCamera\ParametrizeCamera.csproj", "{7C105766-15AC-439C-A69F-B33EA4C1455D}"
-EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VBGrab", "VBGrab\VBGrab.vbproj", "{1177D56B-9223-4291-8B3D-01F993A60470}"
-EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VBParametrizeCamera", "VBParametrizeCamera\VBParametrizeCamera.vbproj", "{6298C17E-4828-4AC3-86BB-D149BF424F76}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grab_ChunkImage", "Grab_ChunkImage\Grab_ChunkImage.csproj", "{A86C97E1-E74E-4637-A7E1-E4AB3C0E07B9}"
 EndProject
@@ -96,22 +92,6 @@ Global
 		{7C105766-15AC-439C-A69F-B33EA4C1455D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C105766-15AC-439C-A69F-B33EA4C1455D}.Release|x64.ActiveCfg = Release|Any CPU
 		{7C105766-15AC-439C-A69F-B33EA4C1455D}.Release|x64.Build.0 = Release|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Debug|x64.Build.0 = Debug|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Release|x64.ActiveCfg = Release|Any CPU
-		{1177D56B-9223-4291-8B3D-01F993A60470}.Release|x64.Build.0 = Release|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Debug|x64.Build.0 = Debug|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Release|x64.ActiveCfg = Release|Any CPU
-		{6298C17E-4828-4AC3-86BB-D149BF424F76}.Release|x64.Build.0 = Release|Any CPU
 		{A86C97E1-E74E-4637-A7E1-E4AB3C0E07B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A86C97E1-E74E-4637-A7E1-E4AB3C0E07B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A86C97E1-E74E-4637-A7E1-E4AB3C0E07B9}.Debug|x64.ActiveCfg = Debug|Any CPU

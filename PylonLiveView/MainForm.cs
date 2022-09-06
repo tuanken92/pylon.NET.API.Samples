@@ -12,6 +12,7 @@ using Basler.Pylon;
 using OpenCvSharp;
 using System.IO;
 using System.Threading.Tasks;
+using OpenCvSharp.Extensions;
 
 namespace PylonLiveView
 {
@@ -23,7 +24,8 @@ namespace PylonLiveView
         private Stopwatch stopWatch = new Stopwatch();
         static Queue<byte[]> queue_data = new Queue<byte[]>();
         public static int num_queue { get; set; }
-        public static int num_line { get; set; }
+        public static int img_height { get; set; }
+        public static int img_width { get; set; }
         // Set up the controls and events to be used and update the device list.
         public MainForm()
         {
@@ -44,9 +46,12 @@ namespace PylonLiveView
             EnableButtons( false, false );
 
             num_queue = 100;
-            num_line = 256;
+            img_height = 256;
+            img_width = 4096;
+
             num_queue_nbup.Value = num_queue;
-            //num_queue_nbup.DataBindings.Add("Value", this, "num_queue", true, DataSourceUpdateMode.OnPropertyChanged);
+            img_height_nbup.Value = img_height;
+            img_width_nbup.Value = img_width;
         }
 
 
@@ -139,7 +144,23 @@ namespace PylonLiveView
             EnableButtons( false, true );
         }
 
+        static void Display(OpenCvSharp.Mat mat, System.Windows.Forms.PictureBox pictureBox)
+        {
+            if (mat == null)
+                return;
 
+            Bitmap bitmap = mat.ToBitmap();
+
+            // Assign a temporary variable to dispose the bitmap after assigning the new bitmap to the display control.
+            Bitmap bitmapOld = pictureBox.Image as Bitmap;
+            // Provide the display control with the new bitmap. This action automatically updates the display.
+            pictureBox.Image = bitmap;
+            if (bitmapOld != null)
+            {
+                // Dispose the bitmap.
+                bitmapOld.Dispose();
+            }
+        }
         // Occurs when an image has been acquired and is ready to be processed.
         private void OnImageGrabbed( Object sender, ImageGrabbedEventArgs e )
         {
@@ -219,7 +240,7 @@ namespace PylonLiveView
         }
 
 
-        public static async Task Async2()
+        public async Task Async2()
         {
 
             Action myaction = () => {
@@ -235,7 +256,7 @@ namespace PylonLiveView
         }
 
 
-        static  void MergeImage()
+        void MergeImage()
         {
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -248,7 +269,7 @@ namespace PylonLiveView
 
 
                 //decode 2
-                var src2 = new Mat(num_line, 4096, MatType.CV_8UC1);
+                var src2 = new Mat(img_height, img_width, MatType.CV_8UC1);
                 src2.SetArray(data);
                 if (!src2.Empty())
                 {
@@ -279,6 +300,7 @@ namespace PylonLiveView
             var image_file = GenerateNameImage();
             bool b = Cv2.ImWrite(image_file, mat);
             Console.WriteLine("save file {1} = {0}", image_file, b);
+            Display(mat, pictureBoxMergeImage);
 
         }
 
@@ -585,6 +607,11 @@ namespace PylonLiveView
                     pixelFormatControl.Parameter = camera.Parameters[PLCamera.PixelFormat];
                     widthSliderControl.Parameter = camera.Parameters[PLCamera.Width];
                     heightSliderControl.Parameter = camera.Parameters[PLCamera.Height];
+
+
+                    img_height_nbup.Value = camera.Parameters[PLCamera.Height].GetValue(); 
+                    img_width_nbup.Value = camera.Parameters[PLCamera.Width].GetValue(); 
+
                     if (camera.Parameters.Contains( PLCamera.GainAbs ))
                     {
                         gainSliderControl.Parameter = camera.Parameters[PLCamera.GainAbs];
@@ -635,12 +662,18 @@ namespace PylonLiveView
 
         private void GetFrame_Btn_Click(object sender, EventArgs e)
         {
+            if (camera == null)
+                return;
+
             // We also increase the number of memory buffers to be used while grabbing.
             long max_buffer = camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
 
             camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(100);
 
             //prepare queue data
+            img_width = (int) img_width_nbup.Value;
+            img_height = (int) img_height_nbup.Value;
+
             num_queue = (int)num_queue_nbup.Value;
             queue_data.Clear();
             queue_data = new Queue<byte[]>(num_queue);
