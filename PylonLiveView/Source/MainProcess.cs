@@ -1,5 +1,7 @@
 ﻿using Basler.Pylon;
+using Cognex.VisionPro;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,8 +41,8 @@ namespace CTTV_VisionInspection.Common
             MyParam.taskLoops[(int)eTaskLoop.Task_MergeImage].ResetToken();
             MyParam.taskLoops[(int)eTaskLoop.Task_MergeImage].RunLoop(MyParam.common_param.time_merge_image, UpdatePLCRegister).ContinueWith((a) =>
             {
-                MyLib.ShowDlgInfor($"Done task merge image!");
-                //Console.WriteLine("Stop task scan PLC");
+                //MyLib.ShowDlgInfor($"Done task merge image!");
+                Console.WriteLine("Done task merge image!");
             }); ;
 
         }
@@ -109,8 +111,12 @@ namespace CTTV_VisionInspection.Common
                 bool bWriteOK = Cv2.ImWrite(image_file, MyParam.mat);
                 Console.WriteLine("save file {1} = {0}", image_file, bWriteOK);
                 if(bWriteOK)
-                    Process.Start(image_file);
-                //MyLib.Display(MyParam.mat, MyParam.mainForm.pictureBoxMergeImage);
+                {
+                    //Process.Start(image_file);
+                    CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
+                    MyLib.Display(cogImage8Grey, MyParam.cogDisplay, true);
+
+                }
             }    
 
         }

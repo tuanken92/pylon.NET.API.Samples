@@ -19,9 +19,9 @@ namespace PylonLiveView
                 Application.SetCompatibleTextRenderingDefault( false );
                 Application.Run(new MainForm());
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
+                MyLib.ShowDlgError(ex.Message);
             }
         }
     }

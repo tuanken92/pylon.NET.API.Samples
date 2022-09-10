@@ -73,5 +73,19 @@ namespace PylonLiveView
             }
             
         }
+
+        private void LoadToolProcess_Btn_Click(object sender, EventArgs e)
+        {
+            string file_toolblock = MyLib.OpenFileDialog(eTypeFile.File_ToolBlock, String.Format($"{MyDefine.workingDirectory}\\Configs"));
+            if (file_toolblock != null)
+            {
+                MyParam.common_param.file_tool_process = MyDefine.file_tool_process;
+                ToolProcess_Txt.Text = file_toolblock;
+            }
+
+            Console.WriteLine("Reading file {0} back to camera device parameters ...", MyParam.common_param.file_tool_process);
+            // Just for demonstration, read the content of the file back to the camera device parameters.
+            //MyParam.camera.Parameters.Load(MyParam.common_param.file_cam_config, ParameterPath.CameraDevice);
+        }
     }
 }

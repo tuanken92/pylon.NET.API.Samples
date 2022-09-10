@@ -32,6 +32,9 @@
             this.FileCAMConfig_Txt = new System.Windows.Forms.TextBox();
             this.LoadCAMConfig_Btn = new System.Windows.Forms.Button();
             this.SaveCAMConfig_Btn = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.ToolProcess_Txt = new System.Windows.Forms.TextBox();
+            this.LoadToolProcess_Btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -70,13 +73,42 @@
             this.SaveCAMConfig_Btn.UseVisualStyleBackColor = true;
             this.SaveCAMConfig_Btn.Click += new System.EventHandler(this.SaveCAMConfig_Btn_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(14, 84);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(69, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Tool Process";
+            // 
+            // ToolProcess_Txt
+            // 
+            this.ToolProcess_Txt.Location = new System.Drawing.Point(17, 100);
+            this.ToolProcess_Txt.Name = "ToolProcess_Txt";
+            this.ToolProcess_Txt.Size = new System.Drawing.Size(597, 20);
+            this.ToolProcess_Txt.TabIndex = 2;
+            // 
+            // LoadToolProcess_Btn
+            // 
+            this.LoadToolProcess_Btn.Location = new System.Drawing.Point(633, 99);
+            this.LoadToolProcess_Btn.Name = "LoadToolProcess_Btn";
+            this.LoadToolProcess_Btn.Size = new System.Drawing.Size(75, 23);
+            this.LoadToolProcess_Btn.TabIndex = 3;
+            this.LoadToolProcess_Btn.Text = "Load";
+            this.LoadToolProcess_Btn.UseVisualStyleBackColor = true;
+            this.LoadToolProcess_Btn.Click += new System.EventHandler(this.LoadToolProcess_Btn_Click);
+            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(732, 325);
             this.Controls.Add(this.SaveCAMConfig_Btn);
+            this.Controls.Add(this.LoadToolProcess_Btn);
             this.Controls.Add(this.LoadCAMConfig_Btn);
+            this.Controls.Add(this.ToolProcess_Txt);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.FileCAMConfig_Txt);
             this.Controls.Add(this.label1);
             this.Name = "SettingForm";
@@ -92,5 +124,8 @@
         private System.Windows.Forms.TextBox FileCAMConfig_Txt;
         private System.Windows.Forms.Button LoadCAMConfig_Btn;
         private System.Windows.Forms.Button SaveCAMConfig_Btn;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox ToolProcess_Txt;
+        private System.Windows.Forms.Button LoadToolProcess_Btn;
     }
 }

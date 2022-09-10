@@ -34,21 +34,18 @@ namespace PylonLiveView
             this.splitContainerConfiguration = new System.Windows.Forms.SplitContainer();
             this.deviceListView = new System.Windows.Forms.ListView();
             this.imageListForDeviceList = new System.Windows.Forms.ImageList(this.components);
+            this.Test_Btn = new System.Windows.Forms.Button();
+            this.SettingBtn = new System.Windows.Forms.Button();
+            this.CloseCamera_Btn = new System.Windows.Forms.Button();
             this.GetFrame_Btn = new System.Windows.Forms.Button();
             this.num_queue_nbup = new System.Windows.Forms.NumericUpDown();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonOneShot = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonContinuousShot = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.pictureBoxResult = new System.Windows.Forms.PictureBox();
-            this.pictureBoxMergeImage = new System.Windows.Forms.PictureBox();
+            this.cogDisplay1 = new Cognex.VisionPro.Display.CogDisplay();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.updateDeviceListTimer = new System.Windows.Forms.Timer(this.components);
-            this.CloseCamera_Btn = new System.Windows.Forms.Button();
-            this.SettingBtn = new System.Windows.Forms.Button();
             this.exposureTimeSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
             this.gainSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
             this.heightSliderControl = new PylonLiveViewControl.IntSliderUserControl();
@@ -65,8 +62,7 @@ namespace PylonLiveView
             this.splitContainerConfiguration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_queue_nbup)).BeginInit();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResult)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMergeImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cogDisplay1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -86,11 +82,7 @@ namespace PylonLiveView
             // splitContainerImageView.Panel2
             // 
             this.splitContainerImageView.Panel2.AutoScroll = true;
-            this.splitContainerImageView.Panel2.Controls.Add(this.label3);
-            this.splitContainerImageView.Panel2.Controls.Add(this.label2);
-            this.splitContainerImageView.Panel2.Controls.Add(this.label1);
-            this.splitContainerImageView.Panel2.Controls.Add(this.pictureBoxResult);
-            this.splitContainerImageView.Panel2.Controls.Add(this.pictureBoxMergeImage);
+            this.splitContainerImageView.Panel2.Controls.Add(this.cogDisplay1);
             this.splitContainerImageView.Panel2.Controls.Add(this.pictureBox);
             this.splitContainerImageView.Size = new System.Drawing.Size(1047, 592);
             this.splitContainerImageView.SplitterDistance = 261;
@@ -111,6 +103,7 @@ namespace PylonLiveView
             // 
             // splitContainerConfiguration.Panel2
             // 
+            this.splitContainerConfiguration.Panel2.Controls.Add(this.Test_Btn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.SettingBtn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.CloseCamera_Btn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.GetFrame_Btn);
@@ -147,6 +140,36 @@ namespace PylonLiveView
             this.imageListForDeviceList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.imageListForDeviceList.ImageSize = new System.Drawing.Size(32, 32);
             this.imageListForDeviceList.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // Test_Btn
+            // 
+            this.Test_Btn.Location = new System.Drawing.Point(7, 363);
+            this.Test_Btn.Name = "Test_Btn";
+            this.Test_Btn.Size = new System.Drawing.Size(76, 23);
+            this.Test_Btn.TabIndex = 2;
+            this.Test_Btn.Text = "Test";
+            this.Test_Btn.UseVisualStyleBackColor = true;
+            this.Test_Btn.Click += new System.EventHandler(this.TestBtn_Click);
+            // 
+            // SettingBtn
+            // 
+            this.SettingBtn.Location = new System.Drawing.Point(133, 363);
+            this.SettingBtn.Name = "SettingBtn";
+            this.SettingBtn.Size = new System.Drawing.Size(76, 23);
+            this.SettingBtn.TabIndex = 2;
+            this.SettingBtn.Text = "Setting";
+            this.SettingBtn.UseVisualStyleBackColor = true;
+            this.SettingBtn.Click += new System.EventHandler(this.SettingBtn_Click);
+            // 
+            // CloseCamera_Btn
+            // 
+            this.CloseCamera_Btn.Location = new System.Drawing.Point(162, 421);
+            this.CloseCamera_Btn.Name = "CloseCamera_Btn";
+            this.CloseCamera_Btn.Size = new System.Drawing.Size(92, 23);
+            this.CloseCamera_Btn.TabIndex = 2;
+            this.CloseCamera_Btn.Text = "Close Camera";
+            this.CloseCamera_Btn.UseVisualStyleBackColor = true;
+            this.CloseCamera_Btn.Click += new System.EventHandler(this.CloseCamera_Btn_Click);
             // 
             // GetFrame_Btn
             // 
@@ -212,58 +235,22 @@ namespace PylonLiveView
             this.toolStripButtonStop.ToolTipText = "Stop Grab";
             this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
             // 
-            // label3
+            // cogDisplay1
             // 
-            this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(1167, 493);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Result Image";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(681, 493);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Merge Image";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(195, 493);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 23);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Live Image";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // pictureBoxResult
-            // 
-            this.pictureBoxResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxResult.Location = new System.Drawing.Point(977, -2);
-            this.pictureBoxResult.Name = "pictureBoxResult";
-            this.pictureBoxResult.Size = new System.Drawing.Size(480, 480);
-            this.pictureBoxResult.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxResult.TabIndex = 2;
-            this.pictureBoxResult.TabStop = false;
-            // 
-            // pictureBoxMergeImage
-            // 
-            this.pictureBoxMergeImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxMergeImage.Location = new System.Drawing.Point(491, -2);
-            this.pictureBoxMergeImage.Name = "pictureBoxMergeImage";
-            this.pictureBoxMergeImage.Size = new System.Drawing.Size(480, 480);
-            this.pictureBoxMergeImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxMergeImage.TabIndex = 1;
-            this.pictureBoxMergeImage.TabStop = false;
+            this.cogDisplay1.ColorMapLowerClipColor = System.Drawing.Color.Black;
+            this.cogDisplay1.ColorMapLowerRoiLimit = 0D;
+            this.cogDisplay1.ColorMapPredefined = Cognex.VisionPro.Display.CogDisplayColorMapPredefinedConstants.None;
+            this.cogDisplay1.ColorMapUpperClipColor = System.Drawing.Color.Black;
+            this.cogDisplay1.ColorMapUpperRoiLimit = 1D;
+            this.cogDisplay1.DoubleTapZoomCycleLength = 2;
+            this.cogDisplay1.DoubleTapZoomSensitivity = 2.5D;
+            this.cogDisplay1.Location = new System.Drawing.Point(491, -2);
+            this.cogDisplay1.MouseWheelMode = Cognex.VisionPro.Display.CogDisplayMouseWheelModeConstants.Zoom1;
+            this.cogDisplay1.MouseWheelSensitivity = 1D;
+            this.cogDisplay1.Name = "cogDisplay1";
+            this.cogDisplay1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cogDisplay1.OcxState")));
+            this.cogDisplay1.Size = new System.Drawing.Size(480, 480);
+            this.cogDisplay1.TabIndex = 4;
             // 
             // pictureBox
             // 
@@ -280,26 +267,6 @@ namespace PylonLiveView
             this.updateDeviceListTimer.Enabled = true;
             this.updateDeviceListTimer.Interval = 5000;
             this.updateDeviceListTimer.Tick += new System.EventHandler(this.updateDeviceListTimer_Tick);
-            // 
-            // CloseCamera_Btn
-            // 
-            this.CloseCamera_Btn.Location = new System.Drawing.Point(162, 421);
-            this.CloseCamera_Btn.Name = "CloseCamera_Btn";
-            this.CloseCamera_Btn.Size = new System.Drawing.Size(92, 23);
-            this.CloseCamera_Btn.TabIndex = 2;
-            this.CloseCamera_Btn.Text = "Close Camera";
-            this.CloseCamera_Btn.UseVisualStyleBackColor = true;
-            this.CloseCamera_Btn.Click += new System.EventHandler(this.CloseCamera_Btn_Click);
-            // 
-            // SettingBtn
-            // 
-            this.SettingBtn.Location = new System.Drawing.Point(133, 363);
-            this.SettingBtn.Name = "SettingBtn";
-            this.SettingBtn.Size = new System.Drawing.Size(76, 23);
-            this.SettingBtn.TabIndex = 2;
-            this.SettingBtn.Text = "Setting";
-            this.SettingBtn.UseVisualStyleBackColor = true;
-            this.SettingBtn.Click += new System.EventHandler(this.SettingBtn_Click);
             // 
             // exposureTimeSliderControl
             // 
@@ -376,6 +343,7 @@ namespace PylonLiveView
             this.Name = "MainForm";
             this.Text = "Pylon Live View";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             this.splitContainerImageView.Panel1.ResumeLayout(false);
             this.splitContainerImageView.Panel1.PerformLayout();
             this.splitContainerImageView.Panel2.ResumeLayout(false);
@@ -388,8 +356,7 @@ namespace PylonLiveView
             ((System.ComponentModel.ISupportInitialize)(this.num_queue_nbup)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResult)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMergeImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cogDisplay1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
 
@@ -411,17 +378,14 @@ namespace PylonLiveView
         private System.Windows.Forms.Button GetFrame_Btn;
         private System.Windows.Forms.NumericUpDown num_queue_nbup;
         private System.Windows.Forms.PictureBox pictureBox;
-        private System.Windows.Forms.PictureBox pictureBoxResult;
-        public System.Windows.Forms.PictureBox pictureBoxMergeImage;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button CloseCamera_Btn;
         public PylonLiveViewControl.IntSliderUserControl widthSliderControl;
         public PylonLiveViewControl.IntSliderUserControl heightSliderControl;
         public PylonLiveViewControl.FloatSliderUserControl gainSliderControl;
         public PylonLiveViewControl.FloatSliderUserControl exposureTimeSliderControl;
         private System.Windows.Forms.Button SettingBtn;
+        private System.Windows.Forms.Button Test_Btn;
+        private Cognex.VisionPro.Display.CogDisplay cogDisplay1;
     }
 }
 

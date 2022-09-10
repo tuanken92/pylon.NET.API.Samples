@@ -1,4 +1,6 @@
 ﻿using Basler.Pylon;
+using Cognex.VisionPro;
+using Cognex.VisionPro.ToolBlock;
 using CTTV_VisionInspection.Dialog;
 using Newtonsoft.Json;
 using OpenCvSharp;
@@ -90,6 +92,7 @@ namespace CTTV_VisionInspection.Common
     public enum eTypeFile
     {
         File_Config,
+        File_ToolBlock,
         File_Bartender,
         File_Excel,
         File_SerialNumber,
@@ -546,6 +549,8 @@ namespace CTTV_VisionInspection.Common
 
         public int time_merge_image { get; set; }
         public string file_cam_config { get; set; }
+        public string file_tool_process { get; set; }
+        public string file_tool_acq { get; set; }
 
         public int num_frame { get; set; }
         public int cur_frame { get; set; }
@@ -567,6 +572,8 @@ namespace CTTV_VisionInspection.Common
             processed_frame = 0;
             output_text_file = MyDefine.text_folder;
             file_cam_config = MyDefine.file_camera_config;
+            file_tool_process = MyDefine.file_tool_process;
+            file_tool_acq = MyDefine.file_tool_acq;
         }
 
     }
@@ -641,6 +648,7 @@ namespace CTTV_VisionInspection.Common
 
     public static class MyParam
     {
+        public static Cognex.VisionPro.Display.CogDisplay cogDisplay;
         public static object lockObject = new object();
         public static Mat mat = new Mat();
         public static bool bIsFirstImg = false;
@@ -650,6 +658,10 @@ namespace CTTV_VisionInspection.Common
         public static ResultReport report_result = new ResultReport();
         
         public static List<TaskLoop> taskLoops = new List<TaskLoop>();
+
+
+        public static CogToolBlock toolBlockProcess;
+        public static CogToolBlock toolBlockAcq;
 
         public static Camera camera = null;
         //public static MainForm mainForm = new MainForm();
@@ -665,6 +677,106 @@ namespace CTTV_VisionInspection.Common
     }
     public class MyLib
     {
+
+        public void InitObject()
+        {
+
+            if (!File.Exists(MyParam.common_param.file_tool_process))
+                MyParam.common_param.file_tool_process = MyDefine.file_tool_process;
+            MyParam.toolBlockProcess = CogSerializer.LoadObjectFromFile(MyParam.common_param.file_tool_process) as CogToolBlock;
+            MyParam.toolBlockProcess.Changed += ToolBlockProcess_Changed;
+            MyParam.toolBlockProcess.Running += ToolBlockProcess_Running;
+            MyParam.toolBlockProcess.Ran += ToolBlockProcess_Ran;
+
+            ToolBlock_PrintInfor(MyParam.toolBlockProcess);
+
+            if (false)
+            {
+                
+                MyParam.toolBlockAcq = CogSerializer.LoadObjectFromFile(MyParam.common_param.file_tool_acq) as CogToolBlock;
+                MyParam.toolBlockAcq.Ran += ToolBlockAcq_Ran;
+                MyParam.toolBlockAcq.Changed += ToolBlockAcq_Changed;
+                MyParam.toolBlockAcq.Running += ToolBlockAcq_Running;
+                ToolBlock_PrintInfor(MyParam.toolBlockAcq);
+            }
+            
+
+        }
+
+        private void ToolBlockProcess_Ran(object sender, EventArgs e)
+        {
+            Console.WriteLine("ToolBlockProcess_Ran");
+        }
+
+        private void ToolBlockProcess_Running(object sender, EventArgs e)
+        {
+            Console.WriteLine("ToolBlockProcess_Running");
+        }
+
+        private void ToolBlockProcess_Changed(object sender, CogChangedEventArgs e)
+        {
+            Console.WriteLine("ToolBlockProcess_Changed");
+        }
+
+        private void ToolBlockAcq_Running(object sender, EventArgs e)
+        {
+            Console.WriteLine("ToolBlockAcq_Running");
+        }
+
+        private void ToolBlockAcq_Changed(object sender, CogChangedEventArgs e)
+        {
+            Console.WriteLine("ToolBlockAcq_Changed");
+        }
+
+        private void ToolBlockAcq_Ran(object sender, EventArgs e)
+        {
+            Console.WriteLine("ToolBlockAcq_Ran");
+        }
+
+        public static void ToolBlock_PrintInfor(CogToolBlock toolblock)
+        {
+            int numTools = toolblock.Tools.Count;
+            Console.WriteLine($"-------------Toolblock {toolblock.Name} begin----------------");
+            Console.WriteLine("-------------element");
+            for (int i = 0; i < numTools; i++)
+            {
+                Console.WriteLine($"{toolblock.Tools[i].Name}");
+
+                //cur record
+                Cognex.VisionPro.ICogRecord tmpRecord = toolblock.Tools[i].CreateCurrentRecord();
+                Console.WriteLine($"\ttmpRecord currentRecord = {tmpRecord.Annotation}");
+                for (int j = 0; j < tmpRecord.SubRecords.Count; j++)
+                {
+                    Console.WriteLine($"\t\tj = {j}: {tmpRecord.SubRecords[j].Annotation}");
+                }
+
+
+                //lastest record
+                tmpRecord = toolblock.Tools[i].CreateLastRunRecord();
+                Console.WriteLine($"\ttmpRecord LastRecord = {tmpRecord.Annotation}");
+                for (int j = 0; j < tmpRecord.SubRecords.Count; j++)
+                {
+                    Console.WriteLine($"\t\tj = {j}: {tmpRecord.SubRecords[j].Annotation}");
+                }
+            }
+
+            Console.WriteLine("-------------input");
+            int numInputs = toolblock.Inputs.Count;
+            for (int i = 0; i < numInputs; i++)
+            {
+                Console.WriteLine($"{toolblock.Inputs[i].Name}");
+            }
+
+            Console.WriteLine("-------------output");
+            int numOutputs = toolblock.Outputs.Count;
+            for (int i = 0; i < numOutputs; i++)
+            {
+                Console.WriteLine($"{toolblock.Outputs[i].Name}");
+            }
+
+            Console.WriteLine($"-------------Toolblock {toolblock.Name} end----------------");
+        }
+
         public static bool IsCameraConnected()
         {
             bool bResult = false;
@@ -692,6 +804,39 @@ namespace CTTV_VisionInspection.Common
                 // Dispose the bitmap.
                 bitmapOld.Dispose();
             }
+        }
+
+        public static void Display(CogImage8Grey cogImage8Grey, Cognex.VisionPro.Display.CogDisplay cogDisplay1, bool result=true)
+        {
+            
+
+            CogGraphicLabel cglCaption = new CogGraphicLabel();
+            Font myFont = new Font("Comic Sans MS", 16, FontStyle.Bold);
+
+            // Set it's text and alignment properties
+            cglCaption.Text = result ? "PASS" : "FAIL";
+            cglCaption.Color = result ? CogColorConstants.Green : CogColorConstants.Red;
+
+            cglCaption.Alignment = CogGraphicLabelAlignmentConstants.BottomLeft;
+            // .NET fonts are read only, so create a new font and then
+            // push this font object onto the Font property of the label
+            // myFont = new Font("Comic Sans MS", 18, FontStyle.Bold);                        
+
+            cglCaption.Font = myFont;
+
+            // Set its space to be '*' - anchored to the image
+            cglCaption.SelectedSpaceName = "*";
+
+            // Position the label over the CogDisplay
+            cglCaption.X = 50;
+            cglCaption.Y = 50;
+
+            // Add the label to the CogDisplay
+            cogDisplay1.InteractiveGraphics.Clear();
+            cogDisplay1.InteractiveGraphics.Add(cglCaption, cglCaption.Text, false);
+            cogDisplay1.Image = cogImage8Grey;
+            cglCaption.Dispose();
+            myFont.Dispose();
         }
 
 
@@ -921,6 +1066,11 @@ namespace CTTV_VisionInspection.Common
 
             switch (type_file)
             {
+                case eTypeFile.File_ToolBlock:
+                    openFileDialog.Title = "Browse ToolBlock Files";
+                    openFileDialog.DefaultExt = "vpp";
+                    openFileDialog.Filter = "vpp files (*.vpp)|*.vpp|All files (*.*)|*.*";
+                    break;
                 case eTypeFile.File_Config:
                     openFileDialog.Title = "Browse Camera Config Files";
                     openFileDialog.DefaultExt = "pfs";

@@ -14,6 +14,7 @@ using System.IO;
 using System.Threading.Tasks;
 using OpenCvSharp.Extensions;
 using CTTV_VisionInspection.Common;
+using Cognex.VisionPro;
 
 namespace PylonLiveView
 {
@@ -48,6 +49,9 @@ namespace PylonLiveView
             
 
             num_queue_nbup.Value = MyParam.common_param.num_frame;
+
+
+            MyParam.cogDisplay = this.cogDisplay1;
         }
 
 
@@ -229,7 +233,7 @@ namespace PylonLiveView
         {
 
             Action myaction = () => {
-                MergeImage();
+                //MergeImage();
             };
             Task task = new Task(myaction);
             task.Start();
@@ -241,53 +245,7 @@ namespace PylonLiveView
         }
 
 
-        void MergeImage()
-        {
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            Mat mat = new Mat();
-            bool bIsFirstImg = false;
-            while (MyParam.common_param.queue_data.Count > 0)
-            {
-                var data = MyParam.common_param.queue_data.Dequeue();
-
-
-                //decode 2
-                var src2 = new Mat(MyParam.common_param.frame_height, MyParam.common_param.frame_height, MatType.CV_8UC1);
-                src2.SetArray(data);
-                if (!src2.Empty())
-                {
-                    //Console.WriteLine("Mat SizeX: {0}", src2.Size().Width);
-                    //Console.WriteLine("Mat SizeY: {0}", src2.Size().Height);
-                    //Console.WriteLine("Mat Channels: {0}", src2.Channels());
-
-                    if (!bIsFirstImg)
-                    {
-                        bIsFirstImg = true;
-                        mat = src2.Clone();
-                    }
-                    else
-                    {
-                        Cv2.VConcat(mat, src2, mat);
-                    }
-                    src2.Release();
-                }
-            }
-
-            watch.Stop();
-            var time_im_decode2 = watch.Elapsed.TotalMilliseconds;
-            Console.WriteLine($"time_im_decode2 grab = {time_im_decode2}");
-
-            Console.WriteLine("Mat SizeX: {0}", mat.Size().Width);
-            Console.WriteLine("Mat SizeY: {0}", mat.Size().Height);
-            Console.WriteLine("Mat Channels: {0}", mat.Channels());
-            var image_file = GenerateNameImage();
-            bool b = Cv2.ImWrite(image_file, mat);
-            Console.WriteLine("save file {1} = {0}", image_file, b);
-            MyLib.Display(mat, pictureBoxMergeImage);
-
-        }
+        
 
 
         public static string GenerateNameImage()
@@ -678,59 +636,7 @@ namespace PylonLiveView
         }
 
 
-        public class MyDefine
-        {
-
-            public static uint WM_LBUTTONDOWN = 0x201;
-            public static uint WM_LBUTTONUP = 0x202;
-
-            public static readonly string workingDirectory = Environment.CurrentDirectory;
-            public static readonly string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
-            public static readonly string workspaceDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
-            public static readonly string resources_folder = String.Format($"{workingDirectory}\\resources");
-
-            public static readonly string regex_get_image_file = @"[^\s]+(.*?)\.(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$";
-            public static readonly string regex_get_ip = @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
-
-
-            #region Path file json
-            public static readonly string file_brand = String.Format($"{workingDirectory}\\Configs\\brand.json");
-            public static readonly string file_category = String.Format($"{workingDirectory}\\Configs\\category.json");
-            public static readonly string file_user = String.Format($"{workingDirectory}\\Configs\\user.json");
-            public static readonly string file_customer = String.Format($"{workingDirectory}\\Configs\\customer.json");
-            public static readonly string file_warehouse = String.Format($"{workingDirectory}\\Configs\\warehouse.json");
-            public static readonly string file_product = String.Format($"{workingDirectory}\\Configs\\product.json");
-            public static readonly string file_unit = String.Format($"{workingDirectory}\\Configs\\unit.json");
-            public static readonly string file_setting = String.Format($"{workingDirectory}\\Configs\\setting.json");
-            public static readonly string file_import_product_manager = String.Format($"{workingDirectory}\\Configs\\product_import_manager.json");
-            public static readonly string file_export_product_manager = String.Format($"{workingDirectory}\\Configs\\product_export_manager.json");
-            public static readonly string import_product_tmp = String.Format($"{workingDirectory}\\Data\\Import\\") + @"product_import_{0}_{1}_{2}.json";
-            public static readonly string export_product_tmp = String.Format($"{workingDirectory}\\Data\\Export\\") + @"product_export_{0}_{1}_{2}.json";
-
-
-            public static readonly string file_config = String.Format($"{workingDirectory}\\Configs\\config_param.json");
-            public static readonly string file_excel = String.Format($"{workingDirectory}\\Data\\ImportData.xlsx");
-
-            public static readonly string file_config_format_data = String.Format($"{workingDirectory}\\Data\\configs\\format_data.json");
-            public static readonly string file_config_common_param = String.Format($"{workingDirectory}\\Data\\configs\\common_param.json");
-            public static readonly string file_config_filter_window = String.Format($"{workingDirectory}\\Data\\configs\\filter_window.json");
-            public static readonly string path_load_img_database = @"C:\Program Files\Cognex\VisionPro\Images";
-            public static readonly string path_load_vpp_file = @"C:\Users\Admin\Desktop\Vpp_file";
-            public static readonly string path_save_images = String.Format("{0}\\Images", projectDirectory);
-
-            public static readonly string key_thh = @"https://tanhungha.com.vn/";
-            public static readonly string hash_key = "";
-            #endregion
-
-            #region api
-            public static string API_OK = "success";
-            public static string API_NG = "error";
-            public static string API_Warning = "warning";
-            public static string API_LOSS_CONNECTION = "network";
-            #endregion
-
-
-        }
+        
 
         private void CloseCamera_Btn_Click(object sender, EventArgs e)
         {
@@ -746,6 +652,36 @@ namespace PylonLiveView
             SettingForm settingForm = new SettingForm();
             settingForm.ShowDialog();
 
+        }
+
+
+        
+
+        private void TestBtn_Click(object sender, EventArgs e)
+        {
+            //Display(true);
+            
+            //Display(false);
+
+            
+            //CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
+            //cogDisplay1.Image = cogImage8Grey;
+
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("Size changed!");
+            Console.WriteLine(e.ToString());
+            if(this.WindowState == FormWindowState.Maximized)
+            {
+                var size = splitContainerImageView.Panel2.ClientSize;
+                Console.WriteLine($"{size.Width}, {size.Height}");
+                pictureBox.Location = new System.Drawing.Point(10, 10);
+                pictureBox.Size= new System.Drawing.Size(size.Width/2 - 10, size.Height - 30);
+                cogDisplay1.Location = new System.Drawing.Point(size.Width/2 + 10, 10);
+                cogDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
+            }
         }
     }
 }
