@@ -107,7 +107,7 @@ namespace PylonLiveViewControl
 
         #endregion
 
-        private System.Windows.Forms.TrackBar slider;
+        public System.Windows.Forms.TrackBar slider;
         private System.Windows.Forms.Label labelMin;
         private System.Windows.Forms.Label labelMax;
         private System.Windows.Forms.Label labelName;

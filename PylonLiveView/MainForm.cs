@@ -13,24 +13,24 @@ using OpenCvSharp;
 using System.IO;
 using System.Threading.Tasks;
 using OpenCvSharp.Extensions;
+using CTTV_VisionInspection.Common;
 
 namespace PylonLiveView
 {
     // The main window.
     public partial class MainForm : Form
     {
-        private Camera camera = null;
+        
         private PixelDataConverter converter = new PixelDataConverter();
-        private Stopwatch stopWatch = new Stopwatch();
-        static Queue<byte[]> queue_data = new Queue<byte[]>();
-        public static int num_queue { get; set; }
-        public static int img_height { get; set; }
-        public static int img_width { get; set; }
+        Stopwatch stopWatch = new Stopwatch();
+
         // Set up the controls and events to be used and update the device list.
         public MainForm()
         {
             InitializeComponent();
 
+
+            MyParam.common_param = SaveLoadParameter.Load_Parameter(MyParam.common_param, MyDefine.file_config) as CommonParam;
             // Set the default names for the controls.
             testImageControl.DefaultName = "Test Image Selector";
             pixelFormatControl.DefaultName = "Pixel Format";
@@ -39,19 +39,15 @@ namespace PylonLiveView
             gainSliderControl.DefaultName = "Gain";
             exposureTimeSliderControl.DefaultName = "Exposure Time";
 
-            // Update the list of available camera devices in the upper left area.
+            // Update the list of available MyParam.camera devices in the upper left area.
             UpdateDeviceList();
 
             // Disable all buttons.
             EnableButtons( false, false );
 
-            num_queue = 100;
-            img_height = 256;
-            img_width = 4096;
+            
 
-            num_queue_nbup.Value = num_queue;
-            img_height_nbup.Value = img_height;
-            img_width_nbup.Value = img_width;
+            num_queue_nbup.Value = MyParam.common_param.num_frame;
         }
 
 
@@ -86,14 +82,14 @@ namespace PylonLiveView
                 return;
             }
 
-            // Close the camera object.
+            // Close the MyParam.camera object.
             DestroyCamera();
             // Because one device is gone, the list needs to be updated.
             UpdateDeviceList();
         }
 
 
-        // Occurs when the connection to a camera device is opened.
+        // Occurs when the connection to a MyParam.camera device is opened.
         private void OnCameraOpened( Object sender, EventArgs e )
         {
             if (InvokeRequired)
@@ -108,7 +104,7 @@ namespace PylonLiveView
         }
 
 
-        // Occurs when the connection to a camera device is closed.
+        // Occurs when the connection to a MyParam.camera device is closed.
         private void OnCameraClosed( Object sender, EventArgs e )
         {
             if (InvokeRequired)
@@ -118,12 +114,12 @@ namespace PylonLiveView
                 return;
             }
 
-            // The camera connection is closed. Disable all buttons.
+            // The MyParam.camera connection is closed. Disable all buttons.
             EnableButtons( false, false );
         }
 
 
-        // Occurs when a camera starts grabbing.
+        // Occurs when a MyParam.camera starts grabbing.
         private void OnGrabStarted( Object sender, EventArgs e )
         {
             if (InvokeRequired)
@@ -133,34 +129,18 @@ namespace PylonLiveView
                 return;
             }
 
-            // Reset the stopwatch used to reduce the amount of displayed images. The camera may acquire images faster than the images can be displayed.
+            // Reset the stopwatch used to reduce the amount of displayed images. The MyParam.camera may acquire images faster than the images can be displayed.
 
             stopWatch.Reset();
 
             // Do not update the device list while grabbing to reduce jitter. Jitter may occur because the GUI thread is blocked for a short time when enumerating.
             updateDeviceListTimer.Stop();
 
-            // The camera is grabbing. Disable the grab buttons. Enable the stop button.
+            // The MyParam.camera is grabbing. Disable the grab buttons. Enable the stop button.
             EnableButtons( false, true );
         }
 
-        static void Display(OpenCvSharp.Mat mat, System.Windows.Forms.PictureBox pictureBox)
-        {
-            if (mat == null)
-                return;
-
-            Bitmap bitmap = mat.ToBitmap();
-
-            // Assign a temporary variable to dispose the bitmap after assigning the new bitmap to the display control.
-            Bitmap bitmapOld = pictureBox.Image as Bitmap;
-            // Provide the display control with the new bitmap. This action automatically updates the display.
-            pictureBox.Image = bitmap;
-            if (bitmapOld != null)
-            {
-                // Dispose the bitmap.
-                bitmapOld.Dispose();
-            }
-        }
+        
         // Occurs when an image has been acquired and is ready to be processed.
         private void OnImageGrabbed( Object sender, ImageGrabbedEventArgs e )
         {
@@ -174,7 +154,7 @@ namespace PylonLiveView
 
             try
             {
-                // Acquire the image from the camera. Only show the latest image. The camera may acquire images faster than the images can be displayed.
+                // Acquire the image from the MyParam.camera. Only show the latest image. The MyParam.camera may acquire images faster than the images can be displayed.
 
                 // Get the grab result.
                 IGrabResult grabResult = e.GrabResult;
@@ -184,10 +164,14 @@ namespace PylonLiveView
                 {
                     
                     //push to queue
-                    byte[] buffer = grabResult.PixelData as byte[];
-                    queue_data.Enqueue(buffer);
+                    lock(MyParam.lockObject)
+                    {
+                        byte[] buffer = grabResult.PixelData as byte[];
+                        MyParam.common_param.queue_data.Enqueue(buffer);
+                        MyParam.common_param.cur_frame++;
+                    }    
 
-                    // Reduce the number of displayed images to a reasonable amount if the camera is acquiring images very fast.
+                    // Reduce the number of displayed images to a reasonable amount if the MyParam.camera is acquiring images very fast.
                     if (!stopWatch.IsRunning || stopWatch.ElapsedMilliseconds > 33)
                     {
                         stopWatch.Restart();
@@ -216,11 +200,12 @@ namespace PylonLiveView
                         Console.WriteLine("Skip display, time process to long = {0}", stopWatch.ElapsedMilliseconds);
                     }
 
-                    if(queue_data.Count >= num_queue)
+                    if(MyParam.common_param.cur_frame == MyParam.common_param.num_frame)
                     {
                         Stop();
-                        _ =  Async2();
-                        Console.WriteLine("Stop Grab = {0}", num_queue);
+                        
+                        //_ =  Async2();
+                        Console.WriteLine("Stop Grab = {0}", MyParam.common_param.num_frame);
                     }
                 }
                 else
@@ -263,13 +248,13 @@ namespace PylonLiveView
 
             Mat mat = new Mat();
             bool bIsFirstImg = false;
-            while (queue_data.Count > 0)
+            while (MyParam.common_param.queue_data.Count > 0)
             {
-                var data = queue_data.Dequeue();
+                var data = MyParam.common_param.queue_data.Dequeue();
 
 
                 //decode 2
-                var src2 = new Mat(img_height, img_width, MatType.CV_8UC1);
+                var src2 = new Mat(MyParam.common_param.frame_height, MyParam.common_param.frame_height, MatType.CV_8UC1);
                 src2.SetArray(data);
                 if (!src2.Empty())
                 {
@@ -300,7 +285,7 @@ namespace PylonLiveView
             var image_file = GenerateNameImage();
             bool b = Cv2.ImWrite(image_file, mat);
             Console.WriteLine("save file {1} = {0}", image_file, b);
-            Display(mat, pictureBoxMergeImage);
+            MyLib.Display(mat, pictureBoxMergeImage);
 
         }
 
@@ -322,7 +307,7 @@ namespace PylonLiveView
             return result;
         }
 
-        // Occurs when a camera has stopped grabbing.
+        // Occurs when a MyParam.camera has stopped grabbing.
         private void OnGrabStopped( Object sender, GrabStopEventArgs e )
         {
             if (InvokeRequired)
@@ -338,7 +323,7 @@ namespace PylonLiveView
             // Re-enable the updating of the device list.
             updateDeviceListTimer.Start();
 
-            // The camera stopped grabbing. Enable the grab buttons. Disable the stop button.
+            // The MyParam.camera stopped grabbing. Enable the grab buttons. Disable the stop button.
             EnableButtons( true, false );
 
             // If the grabbed stop due to an error, display the error message.
@@ -349,22 +334,22 @@ namespace PylonLiveView
         }
 
 
-        // Checks if single shot is supported by the camera.
+        // Checks if single shot is supported by the MyParam.camera.
         public bool IsSingleShotSupported()
         {
             // Camera can be null if not yet opened
-            if (camera == null)
+            if (MyParam.camera == null)
             {
                 return false;
             }
 
             // Camera can be closed
-            if (!camera.IsOpen)
+            if (!MyParam.camera.IsOpen)
             {
                 return false;
             }
 
-            bool canSet = camera.Parameters[PLCamera.AcquisitionMode].CanSetValue( "SingleFrame" );
+            bool canSet = MyParam.camera.Parameters[PLCamera.AcquisitionMode].CanSetValue( "SingleFrame" );
             return canSet;
         }
 
@@ -384,7 +369,7 @@ namespace PylonLiveView
             // Stop the grabbing.
             try
             {
-                camera.StreamGrabber.Stop();
+                MyParam.camera.StreamGrabber.Stop();
             }
             catch (Exception exception)
             {
@@ -393,13 +378,13 @@ namespace PylonLiveView
         }
 
 
-        // Closes the camera object and handles exceptions.
+        // Closes the MyParam.camera object and handles exceptions.
         private void DestroyCamera()
         {
             // Disable all parameter controls.
             try
             {
-                if (camera != null)
+                if (MyParam.camera != null)
                 {
 
                     testImageControl.Parameter = null;
@@ -415,14 +400,14 @@ namespace PylonLiveView
                 ShowException( exception );
             }
 
-            // Destroy the camera object.
+            // Destroy the MyParam.camera object.
             try
             {
-                if (camera != null)
+                if (MyParam.camera != null)
                 {
-                    camera.Close();
-                    camera.Dispose();
-                    camera = null;
+                    MyParam.camera.Close();
+                    MyParam.camera.Dispose();
+                    MyParam.camera = null;
                 }
             }
             catch (Exception exception)
@@ -438,8 +423,8 @@ namespace PylonLiveView
             try
             {
                 // Starts the grabbing of one image.
-                Configuration.AcquireSingleFrame( camera, null );
-                camera.StreamGrabber.Start( 1, GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber );
+                Configuration.AcquireSingleFrame( MyParam.camera, null );
+                MyParam.camera.StreamGrabber.Start( 1, GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber );
             }
             catch (Exception exception)
             {
@@ -454,8 +439,8 @@ namespace PylonLiveView
             try
             {
                 // Start the grabbing of images until grabbing is stopped.
-                //Configuration.AcquireContinuous( camera, null );
-                camera.StreamGrabber.Start( GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber );
+                //Configuration.AcquireContinuous( MyParam.camera, null );
+                MyParam.camera.StreamGrabber.Start( GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber );
             }
             catch (Exception exception)
             {
@@ -464,12 +449,12 @@ namespace PylonLiveView
         }
 
 
-        // Updates the list of available camera devices.
+        // Updates the list of available MyParam.camera devices.
         private void UpdateDeviceList()
         {
             try
             {
-                // Ask the camera finder for a list of camera devices.
+                // Ask the MyParam.camera finder for a list of MyParam.camera devices.
                 List<ICameraInfo> allCameras = CameraFinder.Enumerate();
 
                 ListView.ListViewItemCollection items = deviceListView.Items;
@@ -483,7 +468,7 @@ namespace PylonLiveView
                     {
                         ICameraInfo tag = item.Tag as ICameraInfo;
 
-                        // Is the camera found already in the list of cameras?
+                        // Is the MyParam.camera found already in the list of cameras?
                         if (tag[CameraInfoKey.FullName] == cameraInfo[CameraInfoKey.FullName])
                         {
                             tag = cameraInfo;
@@ -492,7 +477,7 @@ namespace PylonLiveView
                         }
                     }
 
-                    // If the camera is not in the list, add it to the list.
+                    // If the MyParam.camera is not in the list, add it to the list.
                     if (newitem)
                     {
                         // Create the item to display.
@@ -506,7 +491,7 @@ namespace PylonLiveView
                         }
                         item.ToolTipText = toolTipText;
 
-                        // Store the camera info in the displayed item.
+                        // Store the MyParam.camera info in the displayed item.
                         item.Tag = cameraInfo;
 
                         // Attach the device data.
@@ -516,12 +501,12 @@ namespace PylonLiveView
 
 
 
-                // Remove old camera devices that have been disconnected.
+                // Remove old MyParam.camera devices that have been disconnected.
                 foreach (ListViewItem item in items)
                 {
                     bool exists = false;
 
-                    // For each camera in the list, check whether it can be found by enumeration.
+                    // For each MyParam.camera in the list, check whether it can be found by enumeration.
                     foreach (ICameraInfo cameraInfo in allCameras)
                     {
                         if (((ICameraInfo)item.Tag)[CameraInfoKey.FullName] == cameraInfo[CameraInfoKey.FullName])
@@ -530,7 +515,7 @@ namespace PylonLiveView
                             break;
                         }
                     }
-                    // If the camera has not been found, remove it from the list view.
+                    // If the MyParam.camera has not been found, remove it from the list view.
                     if (!exists)
                     {
                         deviceListView.Items.Remove( item );
@@ -551,26 +536,28 @@ namespace PylonLiveView
         }
 
 
-        // Closes the camera object when the window is closed.
+        // Closes the MyParam.camera object when the window is closed.
         private void MainForm_FormClosing( object sender, FormClosingEventArgs ev )
         {
-            // Close the camera object.
+            // Close the MyParam.camera object.
             DestroyCamera();
+            UpdateParam();
+            SaveLoadParameter.Save_Parameter(MyParam.common_param, MyDefine.file_config);
         }
 
 
-        // Occurs when a new camera has been selected in the list. Destroys the object of the currently opened camera device and
-        // creates a new object for the selected camera device. After that, the connection to the selected camera device is opened.
+        // Occurs when a new MyParam.camera has been selected in the list. Destroys the object of the currently opened MyParam.camera device and
+        // creates a new object for the selected MyParam.camera device. After that, the connection to the selected MyParam.camera device is opened.
         private void deviceListView_SelectedIndexChanged( object sender, EventArgs ev )
         {
-            // Destroy the old camera object.
-            if (camera != null)
+            // Destroy the old MyParam.camera object.
+            if (MyParam.camera != null)
             {
                 DestroyCamera();
             }
 
 
-            // Open the connection to the selected camera device.
+            // Open the connection to the selected MyParam.camera device.
             if (deviceListView.SelectedItems.Count > 0)
             {
                 // Get the first selected item.
@@ -579,54 +566,53 @@ namespace PylonLiveView
                 ICameraInfo selectedCamera = item.Tag as ICameraInfo;
                 try
                 {
-                    // Create a new camera object.
-                    camera = new Camera( selectedCamera );
+                    // Create a new MyParam.camera object.
+                    MyParam.camera = new Camera( selectedCamera );
 
-                    //camera.CameraOpened += Configuration.AcquireContinuous;
+                    //MyParam.camera.CameraOpened += Configuration.AcquireContinuous;
 
                     // Register for the events of the image provider needed for proper operation.
-                    camera.ConnectionLost += OnConnectionLost;
-                    camera.CameraOpened += OnCameraOpened;
-                    camera.CameraClosed += OnCameraClosed;
-                    camera.StreamGrabber.GrabStarted += OnGrabStarted;
-                    camera.StreamGrabber.ImageGrabbed += OnImageGrabbed;
-                    camera.StreamGrabber.GrabStopped += OnGrabStopped;
+                    MyParam.camera.ConnectionLost += OnConnectionLost;
+                    MyParam.camera.CameraOpened += OnCameraOpened;
+                    MyParam.camera.CameraClosed += OnCameraClosed;
+                    MyParam.camera.StreamGrabber.GrabStarted += OnGrabStarted;
+                    MyParam.camera.StreamGrabber.ImageGrabbed += OnImageGrabbed;
+                    MyParam.camera.StreamGrabber.GrabStopped += OnGrabStopped;
 
-                    // Open the connection to the camera device.
-                    camera.Open();
+                    // Open the connection to the MyParam.camera device.
+                    MyParam.camera.Open();
 
                     // Set the parameter for the controls.
-                    if (camera.Parameters[PLCamera.TestImageSelector].IsWritable)
+                    if (MyParam.camera.Parameters[PLCamera.TestImageSelector].IsWritable)
                     {
-                        testImageControl.Parameter = camera.Parameters[PLCamera.TestImageSelector];
+                        testImageControl.Parameter = MyParam.camera.Parameters[PLCamera.TestImageSelector];
                     }
                     else
                     {
-                        testImageControl.Parameter = camera.Parameters[PLCamera.TestPattern];
+                        testImageControl.Parameter = MyParam.camera.Parameters[PLCamera.TestPattern];
                     }
-                    pixelFormatControl.Parameter = camera.Parameters[PLCamera.PixelFormat];
-                    widthSliderControl.Parameter = camera.Parameters[PLCamera.Width];
-                    heightSliderControl.Parameter = camera.Parameters[PLCamera.Height];
+                    pixelFormatControl.Parameter = MyParam.camera.Parameters[PLCamera.PixelFormat];
+                    widthSliderControl.Parameter = MyParam.camera.Parameters[PLCamera.Width];
+                    heightSliderControl.Parameter = MyParam.camera.Parameters[PLCamera.Height];
 
 
-                    img_height_nbup.Value = camera.Parameters[PLCamera.Height].GetValue(); 
-                    img_width_nbup.Value = camera.Parameters[PLCamera.Width].GetValue(); 
+                   
 
-                    if (camera.Parameters.Contains( PLCamera.GainAbs ))
+                    if (MyParam.camera.Parameters.Contains( PLCamera.GainAbs ))
                     {
-                        gainSliderControl.Parameter = camera.Parameters[PLCamera.GainAbs];
+                        gainSliderControl.Parameter = MyParam.camera.Parameters[PLCamera.GainAbs];
                     }
                     else
                     {
-                        gainSliderControl.Parameter = camera.Parameters[PLCamera.Gain];
+                        gainSliderControl.Parameter = MyParam.camera.Parameters[PLCamera.Gain];
                     }
-                    if (camera.Parameters.Contains( PLCamera.ExposureTimeAbs ))
+                    if (MyParam.camera.Parameters.Contains( PLCamera.ExposureTimeAbs ))
                     {
-                        exposureTimeSliderControl.Parameter = camera.Parameters[PLCamera.ExposureTimeAbs];
+                        exposureTimeSliderControl.Parameter = MyParam.camera.Parameters[PLCamera.ExposureTimeAbs];
                     }
                     else
                     {
-                        exposureTimeSliderControl.Parameter = camera.Parameters[PLCamera.ExposureTime];
+                        exposureTimeSliderControl.Parameter = MyParam.camera.Parameters[PLCamera.ExposureTime];
                     }
                 }
                 catch (Exception exception)
@@ -643,13 +629,13 @@ namespace PylonLiveView
             if (ev.KeyCode == Keys.F5)
             {
                 ev.Handled = true;
-                // Update the list of available camera devices.
+                // Update the list of available MyParam.camera devices.
                 UpdateDeviceList();
             }
         }
 
 
-        // Timer callback used to periodically check whether displayed camera devices are still attached to the PC.
+        // Timer callback used to periodically check whether displayed MyParam.camera devices are still attached to the PC.
         private void updateDeviceListTimer_Tick( object sender, EventArgs e )
         {
             UpdateDeviceList();
@@ -660,30 +646,35 @@ namespace PylonLiveView
             
         }
 
+
+        void UpdateParam()
+        {
+            //prepare queue data
+            
+            MyParam.common_param.num_frame = (int)num_queue_nbup.Value;
+        }
         private void GetFrame_Btn_Click(object sender, EventArgs e)
         {
-            if (camera == null)
+            if (MyParam.camera == null)
                 return;
 
             // We also increase the number of memory buffers to be used while grabbing.
-            long max_buffer = camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
+            long max_buffer = MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
 
-            camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(100);
+            MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(MyParam.common_param.num_frame);
 
-            //prepare queue data
-            img_width = (int) img_width_nbup.Value;
-            img_height = (int) img_height_nbup.Value;
-
-            num_queue = (int)num_queue_nbup.Value;
-            queue_data.Clear();
-            queue_data = new Queue<byte[]>(num_queue);
-            Console.WriteLine("num_queue = {0}, real = {1}, max buffer = {2}", num_queue, num_queue_nbup.Value, max_buffer);
-
+            UpdateParam();
+            MyParam.common_param.cur_frame = 0;
+            MyParam.common_param.processed_frame = 0;
+            MyParam.bIsFirstImg = false;
+            MyParam.mat.Release();
+            MyParam.common_param.queue_data.Clear();
+            MyParam.common_param.queue_data = new Queue<byte[]>(MyParam.common_param.num_frame);
+            Console.WriteLine("num_queue = {0}, real = {1}, max buffer = {2}", MyParam.common_param.num_frame, num_queue_nbup.Value, max_buffer);
+            Console.WriteLine("width = {0}, height = {1}", MyParam.common_param.frame_width, MyParam.common_param.frame_height);
+            MainProcess.RunLoopMergeImage();
             //start
             ContinuousShot();
-
-
-            
         }
 
 
@@ -738,6 +729,22 @@ namespace PylonLiveView
             public static string API_LOSS_CONNECTION = "network";
             #endregion
 
+
+        }
+
+        private void CloseCamera_Btn_Click(object sender, EventArgs e)
+        {
+            if (MyParam.camera == null)
+                return;
+
+            if (MyParam.camera.IsOpen)
+                MyParam.camera.Close();
+        }
+
+        private void SettingBtn_Click(object sender, EventArgs e)
+        {
+            SettingForm settingForm = new SettingForm();
+            settingForm.ShowDialog();
 
         }
     }

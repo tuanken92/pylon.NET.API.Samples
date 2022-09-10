@@ -40,23 +40,21 @@ namespace PylonLiveView
             this.toolStripButtonOneShot = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonContinuousShot = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.pictureBoxResult = new System.Windows.Forms.PictureBox();
+            this.pictureBoxMergeImage = new System.Windows.Forms.PictureBox();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.updateDeviceListTimer = new System.Windows.Forms.Timer(this.components);
-            this.pictureBoxMergeImage = new System.Windows.Forms.PictureBox();
-            this.pictureBoxResult = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.CloseCamera_Btn = new System.Windows.Forms.Button();
+            this.SettingBtn = new System.Windows.Forms.Button();
             this.exposureTimeSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
             this.gainSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
             this.heightSliderControl = new PylonLiveViewControl.IntSliderUserControl();
             this.widthSliderControl = new PylonLiveViewControl.IntSliderUserControl();
             this.pixelFormatControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
             this.testImageControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
-            this.img_height_nbup = new System.Windows.Forms.NumericUpDown();
-            this.button1 = new System.Windows.Forms.Button();
-            this.img_width_nbup = new System.Windows.Forms.NumericUpDown();
-            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerImageView)).BeginInit();
             this.splitContainerImageView.Panel1.SuspendLayout();
             this.splitContainerImageView.Panel2.SuspendLayout();
@@ -67,11 +65,9 @@ namespace PylonLiveView
             this.splitContainerConfiguration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_queue_nbup)).BeginInit();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMergeImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResult)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_height_nbup)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_width_nbup)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMergeImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainerImageView
@@ -115,10 +111,8 @@ namespace PylonLiveView
             // 
             // splitContainerConfiguration.Panel2
             // 
-            this.splitContainerConfiguration.Panel2.Controls.Add(this.button2);
-            this.splitContainerConfiguration.Panel2.Controls.Add(this.img_width_nbup);
-            this.splitContainerConfiguration.Panel2.Controls.Add(this.button1);
-            this.splitContainerConfiguration.Panel2.Controls.Add(this.img_height_nbup);
+            this.splitContainerConfiguration.Panel2.Controls.Add(this.SettingBtn);
+            this.splitContainerConfiguration.Panel2.Controls.Add(this.CloseCamera_Btn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.GetFrame_Btn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.num_queue_nbup);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.exposureTimeSliderControl);
@@ -156,7 +150,7 @@ namespace PylonLiveView
             // 
             // GetFrame_Btn
             // 
-            this.GetFrame_Btn.Location = new System.Drawing.Point(132, 394);
+            this.GetFrame_Btn.Location = new System.Drawing.Point(133, 334);
             this.GetFrame_Btn.Name = "GetFrame_Btn";
             this.GetFrame_Btn.Size = new System.Drawing.Size(76, 23);
             this.GetFrame_Btn.TabIndex = 2;
@@ -166,7 +160,7 @@ namespace PylonLiveView
             // 
             // num_queue_nbup
             // 
-            this.num_queue_nbup.Location = new System.Drawing.Point(6, 397);
+            this.num_queue_nbup.Location = new System.Drawing.Point(7, 337);
             this.num_queue_nbup.Name = "num_queue_nbup";
             this.num_queue_nbup.Size = new System.Drawing.Size(120, 20);
             this.num_queue_nbup.TabIndex = 1;
@@ -218,6 +212,59 @@ namespace PylonLiveView
             this.toolStripButtonStop.ToolTipText = "Stop Grab";
             this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
             // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(1167, 493);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(100, 23);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "Result Image";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(681, 493);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(100, 23);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Merge Image";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(195, 493);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Live Image";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pictureBoxResult
+            // 
+            this.pictureBoxResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxResult.Location = new System.Drawing.Point(977, -2);
+            this.pictureBoxResult.Name = "pictureBoxResult";
+            this.pictureBoxResult.Size = new System.Drawing.Size(480, 480);
+            this.pictureBoxResult.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxResult.TabIndex = 2;
+            this.pictureBoxResult.TabStop = false;
+            // 
+            // pictureBoxMergeImage
+            // 
+            this.pictureBoxMergeImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxMergeImage.Location = new System.Drawing.Point(491, -2);
+            this.pictureBoxMergeImage.Name = "pictureBoxMergeImage";
+            this.pictureBoxMergeImage.Size = new System.Drawing.Size(480, 480);
+            this.pictureBoxMergeImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxMergeImage.TabIndex = 1;
+            this.pictureBoxMergeImage.TabStop = false;
+            // 
             // pictureBox
             // 
             this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -234,58 +281,25 @@ namespace PylonLiveView
             this.updateDeviceListTimer.Interval = 5000;
             this.updateDeviceListTimer.Tick += new System.EventHandler(this.updateDeviceListTimer_Tick);
             // 
-            // pictureBoxMergeImage
+            // CloseCamera_Btn
             // 
-            this.pictureBoxMergeImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxMergeImage.Location = new System.Drawing.Point(491, -2);
-            this.pictureBoxMergeImage.Name = "pictureBoxMergeImage";
-            this.pictureBoxMergeImage.Size = new System.Drawing.Size(480, 480);
-            this.pictureBoxMergeImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxMergeImage.TabIndex = 1;
-            this.pictureBoxMergeImage.TabStop = false;
+            this.CloseCamera_Btn.Location = new System.Drawing.Point(162, 421);
+            this.CloseCamera_Btn.Name = "CloseCamera_Btn";
+            this.CloseCamera_Btn.Size = new System.Drawing.Size(92, 23);
+            this.CloseCamera_Btn.TabIndex = 2;
+            this.CloseCamera_Btn.Text = "Close Camera";
+            this.CloseCamera_Btn.UseVisualStyleBackColor = true;
+            this.CloseCamera_Btn.Click += new System.EventHandler(this.CloseCamera_Btn_Click);
             // 
-            // pictureBoxResult
+            // SettingBtn
             // 
-            this.pictureBoxResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxResult.Location = new System.Drawing.Point(977, -2);
-            this.pictureBoxResult.Name = "pictureBoxResult";
-            this.pictureBoxResult.Size = new System.Drawing.Size(480, 480);
-            this.pictureBoxResult.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxResult.TabIndex = 2;
-            this.pictureBoxResult.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(195, 493);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 23);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Live Image";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(681, 493);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Merge Image";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(1167, 493);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Result Image";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.SettingBtn.Location = new System.Drawing.Point(133, 363);
+            this.SettingBtn.Name = "SettingBtn";
+            this.SettingBtn.Size = new System.Drawing.Size(76, 23);
+            this.SettingBtn.TabIndex = 2;
+            this.SettingBtn.Text = "Setting";
+            this.SettingBtn.UseVisualStyleBackColor = true;
+            this.SettingBtn.Click += new System.EventHandler(this.SettingBtn_Click);
             // 
             // exposureTimeSliderControl
             // 
@@ -348,62 +362,8 @@ namespace PylonLiveView
             this.testImageControl.DefaultName = "N/A";
             this.testImageControl.Location = new System.Drawing.Point(12, 0);
             this.testImageControl.Name = "testImageControl";
-            this.testImageControl.Size = new System.Drawing.Size(236, 57);
+            this.testImageControl.Size = new System.Drawing.Size(236, 51);
             this.testImageControl.TabIndex = 0;
-            // 
-            // img_height_nbup
-            // 
-            this.img_height_nbup.Location = new System.Drawing.Point(6, 368);
-            this.img_height_nbup.Maximum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            0});
-            this.img_height_nbup.Name = "img_height_nbup";
-            this.img_height_nbup.Size = new System.Drawing.Size(120, 20);
-            this.img_height_nbup.TabIndex = 1;
-            this.img_height_nbup.Value = new decimal(new int[] {
-            256,
-            0,
-            0,
-            0});
-            this.img_height_nbup.ValueChanged += new System.EventHandler(this.num_queue_nbup_ValueChanged);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(132, 365);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(76, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Height";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // img_width_nbup
-            // 
-            this.img_width_nbup.Location = new System.Drawing.Point(6, 339);
-            this.img_width_nbup.Maximum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            0});
-            this.img_width_nbup.Name = "img_width_nbup";
-            this.img_width_nbup.Size = new System.Drawing.Size(120, 20);
-            this.img_width_nbup.TabIndex = 1;
-            this.img_width_nbup.Value = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            0});
-            this.img_width_nbup.ValueChanged += new System.EventHandler(this.num_queue_nbup_ValueChanged);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(132, 336);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(76, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Width";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -428,11 +388,9 @@ namespace PylonLiveView
             ((System.ComponentModel.ISupportInitialize)(this.num_queue_nbup)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMergeImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResult)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_height_nbup)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.img_width_nbup)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMergeImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -450,22 +408,20 @@ namespace PylonLiveView
         private System.Windows.Forms.ImageList imageListForDeviceList;
         private PylonLiveViewControl.EnumerationComboBoxUserControl testImageControl;
         private PylonLiveViewControl.EnumerationComboBoxUserControl pixelFormatControl;
-        private PylonLiveViewControl.IntSliderUserControl widthSliderControl;
-        private PylonLiveViewControl.IntSliderUserControl heightSliderControl;
-        private PylonLiveViewControl.FloatSliderUserControl gainSliderControl;
-        private PylonLiveViewControl.FloatSliderUserControl exposureTimeSliderControl;
         private System.Windows.Forms.Button GetFrame_Btn;
         private System.Windows.Forms.NumericUpDown num_queue_nbup;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.PictureBox pictureBoxResult;
-        private System.Windows.Forms.PictureBox pictureBoxMergeImage;
+        public System.Windows.Forms.PictureBox pictureBoxMergeImage;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.NumericUpDown img_width_nbup;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.NumericUpDown img_height_nbup;
+        private System.Windows.Forms.Button CloseCamera_Btn;
+        public PylonLiveViewControl.IntSliderUserControl widthSliderControl;
+        public PylonLiveViewControl.IntSliderUserControl heightSliderControl;
+        public PylonLiveViewControl.FloatSliderUserControl gainSliderControl;
+        public PylonLiveViewControl.FloatSliderUserControl exposureTimeSliderControl;
+        private System.Windows.Forms.Button SettingBtn;
     }
 }
 

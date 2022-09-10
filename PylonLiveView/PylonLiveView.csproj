@@ -68,6 +68,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\x86\Release\Basler.Pylon.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dll\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dll\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OpenCvSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenCvSharp4.4.5.0.20201013\lib\net461\OpenCvSharp.dll</HintPath>
     </Reference>
@@ -103,6 +111,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\LogData.cs" />
+    <Compile Include="Common\MyDefine.cs" />
+    <Compile Include="Common\MyLib.cs" />
+    <Compile Include="Common\SvLogger.cs" />
+    <Compile Include="Dialog\DialogMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\DialogMessage.designer.cs">
+      <DependentUpon>DialogMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\DialogMessageList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\DialogMessageList.designer.cs">
+      <DependentUpon>DialogMessageList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\DialogYesNo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\DialogYesNo.designer.cs">
+      <DependentUpon>DialogYesNo.cs</DependentUpon>
+    </Compile>
     <Compile Include="EnumerationComboBoxUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -129,6 +159,22 @@
     <Compile Include="IntSliderUserControl.Designer.cs">
       <DependentUpon>IntSliderUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingForm.Designer.cs">
+      <DependentUpon>SettingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Source\MainProcess.cs" />
+    <EmbeddedResource Include="Dialog\DialogMessage.resx">
+      <DependentUpon>DialogMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\DialogMessageList.resx">
+      <DependentUpon>DialogMessageList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\DialogYesNo.resx">
+      <DependentUpon>DialogYesNo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EnumerationComboBoxUserControl.resx">
       <DependentUpon>EnumerationComboBoxUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -152,7 +198,12 @@
     <EmbeddedResource Include="IntSliderUserControl.resx">
       <DependentUpon>IntSliderUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SettingForm.resx">
+      <DependentUpon>SettingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Configs\CameraParameters.pfs" />
+    <None Include="Configs\config_param.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -164,6 +215,53 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Dll\log4net.dll" />
+    <Content Include="Dll\Newtonsoft.Json.dll" />
+    <Content Include="Pictures\auto_white_24dp.png" />
+    <Content Include="Pictures\btnCancel.png" />
+    <Content Include="Pictures\btnOK.png" />
+    <Content Include="Pictures\camera_black_24dp.png" />
+    <Content Include="Pictures\cancel_white_24dp.png" />
+    <Content Include="Pictures\cleaning.png" />
+    <Content Include="Pictures\close.png" />
+    <Content Include="Pictures\close_white_24dp.png" />
+    <Content Include="Pictures\edit.png" />
+    <Content Include="Pictures\err.png" />
+    <Content Include="Pictures\FailIcon.png" />
+    <Content Include="Pictures\info_white_24dp.png" />
+    <Content Include="Pictures\light_mode_black_24dp.png" />
+    <Content Include="Pictures\login.png" />
+    <Content Include="Pictures\logout_white_24dp.png" />
+    <Content Include="Pictures\Log_Off.png" />
+    <Content Include="Pictures\Log_On.png" />
+    <Content Include="Pictures\log_white_24dp.png" />
+    <Content Include="Pictures\manage_accounts_white_24dp.png" />
+    <Content Include="Pictures\manual_white_24dp.png" />
+    <Content Include="Pictures\maximize_white_24dp.png" />
+    <Content Include="Pictures\menu_white_24dp.png" />
+    <Content Include="Pictures\minimize_white_24dp.png" />
+    <Content Include="Pictures\models_black_24dp.png" />
+    <Content Include="Pictures\motion_black_24dp.png" />
+    <Content Include="Pictures\ok_white_24dp.png" />
+    <Content Include="Pictures\open_in_browser_black_24dp.png" />
+    <Content Include="Pictures\outline_cleaning_services_black_18dp.png" />
+    <Content Include="Pictures\outline_cleaning_services_black_24dp.png" />
+    <Content Include="Pictures\outline_file_open_black_18dp.png" />
+    <Content Include="Pictures\outline_folder_open_black_18dp.png" />
+    <Content Include="Pictures\plus.png" />
+    <Content Include="Pictures\radar_black_24dp.png" />
+    <Content Include="Pictures\save.png" />
+    <Content Include="Pictures\search.png" />
+    <Content Include="Pictures\SuccessIcon.png" />
+    <Content Include="Pictures\teach_white_24dp.png" />
+    <Content Include="Pictures\THH.png" />
+    <Content Include="Pictures\thh_size24.png" />
+    <Content Include="Pictures\vision-32.png" />
+    <Content Include="Pictures\vision_inspection_icon.ico" />
+    <Content Include="Pictures\warning.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
