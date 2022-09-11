@@ -51,7 +51,11 @@ namespace PylonLiveView
             num_queue_nbup.Value = MyParam.common_param.num_frame;
 
 
-            MyParam.cogDisplay = this.cogDisplay1;
+            //MyParam.cogDisplay = this.cogDisplay1;
+            MyParam.cogRecordDisplay = this.cogRecordDisplay1;
+
+            //MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.AcqFifo);
+            MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.ImageProcess);
         }
 
 
@@ -173,6 +177,7 @@ namespace PylonLiveView
                         byte[] buffer = grabResult.PixelData as byte[];
                         MyParam.common_param.queue_data.Enqueue(buffer);
                         MyParam.common_param.cur_frame++;
+                        Console.WriteLine("Push to queue = {0}", MyParam.common_param.cur_frame);
                     }    
 
                     // Reduce the number of displayed images to a reasonable amount if the MyParam.camera is acquiring images very fast.
@@ -397,7 +402,7 @@ namespace PylonLiveView
             try
             {
                 // Start the grabbing of images until grabbing is stopped.
-                //Configuration.AcquireContinuous( MyParam.camera, null );
+                Configuration.AcquireContinuous( MyParam.camera, null );
                 MyParam.camera.StreamGrabber.Start( GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber );
             }
             catch (Exception exception)
@@ -499,6 +504,10 @@ namespace PylonLiveView
         {
             // Close the MyParam.camera object.
             DestroyCamera();
+            MyLib.ReleaseObject();
+
+
+            //save param
             UpdateParam();
             SaveLoadParameter.Save_Parameter(MyParam.common_param, MyDefine.file_config);
         }
@@ -599,11 +608,6 @@ namespace PylonLiveView
             UpdateDeviceList();
         }
 
-        private void num_queue_nbup_ValueChanged(object sender, EventArgs e)
-        {
-            
-        }
-
 
         void UpdateParam()
         {
@@ -650,7 +654,7 @@ namespace PylonLiveView
         private void SettingBtn_Click(object sender, EventArgs e)
         {
             SettingForm settingForm = new SettingForm();
-            settingForm.ShowDialog();
+            settingForm.Show();
 
         }
 
@@ -671,16 +675,19 @@ namespace PylonLiveView
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("Size changed!");
-            Console.WriteLine(e.ToString());
-            if(this.WindowState == FormWindowState.Maximized)
+            //Console.WriteLine("Size changed!");
+            //Console.WriteLine(e.ToString());
+            //if(this.WindowState == FormWindowState.Maximized)
             {
                 var size = splitContainerImageView.Panel2.ClientSize;
                 Console.WriteLine($"{size.Width}, {size.Height}");
                 pictureBox.Location = new System.Drawing.Point(10, 10);
                 pictureBox.Size= new System.Drawing.Size(size.Width/2 - 10, size.Height - 30);
-                cogDisplay1.Location = new System.Drawing.Point(size.Width/2 + 10, 10);
-                cogDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
+                //cogDisplay1.Location = new System.Drawing.Point(size.Width/2 + 10, 10);
+                //cogDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
+                
+                cogRecordDisplay1.Location = new System.Drawing.Point(size.Width/2 + 10, 10);
+                cogRecordDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
             }
         }
     }

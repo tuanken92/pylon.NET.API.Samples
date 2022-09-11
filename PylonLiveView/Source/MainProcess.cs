@@ -114,8 +114,12 @@ namespace CTTV_VisionInspection.Common
                 {
                     //Process.Start(image_file);
                     CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
-                    MyLib.Display(cogImage8Grey, MyParam.cogDisplay, true);
+                    //MyLib.Display(cogImage8Grey, MyParam.cogDisplay, true);
 
+
+                    //process
+                    MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
+                    MyParam.toolBlockProcess.Run();
                 }
             }    
 

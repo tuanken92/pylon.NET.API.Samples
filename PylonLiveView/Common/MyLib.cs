@@ -1,5 +1,7 @@
 ﻿using Basler.Pylon;
 using Cognex.VisionPro;
+using Cognex.VisionPro.ID;
+using Cognex.VisionPro.ResultsAnalysis;
 using Cognex.VisionPro.ToolBlock;
 using CTTV_VisionInspection.Dialog;
 using Newtonsoft.Json;
@@ -28,6 +30,12 @@ using static CTTV_VisionInspection.Common.SvLogger;
 
 namespace CTTV_VisionInspection.Common
 {
+    public enum TYPE_OF_TOOLBLOCK
+    {
+        AcqFifo = 0,
+        ImageProcess = 1,
+        Other = 2,
+    }
 
     public enum eModeRun
     {
@@ -93,7 +101,7 @@ namespace CTTV_VisionInspection.Common
     {
         File_Config,
         File_ToolBlock,
-        File_Bartender,
+        File_Image,
         File_Excel,
         File_SerialNumber,
         File_Job,
@@ -564,7 +572,7 @@ namespace CTTV_VisionInspection.Common
 
         public CommonParam()
         {
-            time_merge_image = 20;
+            time_merge_image = 10;
             num_frame = 2;
             frame_width = 4096;
             frame_height = 256;
@@ -649,6 +657,7 @@ namespace CTTV_VisionInspection.Common
     public static class MyParam
     {
         public static Cognex.VisionPro.Display.CogDisplay cogDisplay;
+        public static Cognex.VisionPro.CogRecordDisplay cogRecordDisplay;
         public static object lockObject = new object();
         public static Mat mat = new Mat();
         public static bool bIsFirstImg = false;
@@ -678,57 +687,144 @@ namespace CTTV_VisionInspection.Common
     public class MyLib
     {
 
-        public void InitObject()
+        public static void InitObject(int tool_index)
         {
-
-            if (!File.Exists(MyParam.common_param.file_tool_process))
-                MyParam.common_param.file_tool_process = MyDefine.file_tool_process;
-            MyParam.toolBlockProcess = CogSerializer.LoadObjectFromFile(MyParam.common_param.file_tool_process) as CogToolBlock;
-            MyParam.toolBlockProcess.Changed += ToolBlockProcess_Changed;
-            MyParam.toolBlockProcess.Running += ToolBlockProcess_Running;
-            MyParam.toolBlockProcess.Ran += ToolBlockProcess_Ran;
-
-            ToolBlock_PrintInfor(MyParam.toolBlockProcess);
-
-            if (false)
+            switch (tool_index)
             {
-                
-                MyParam.toolBlockAcq = CogSerializer.LoadObjectFromFile(MyParam.common_param.file_tool_acq) as CogToolBlock;
-                MyParam.toolBlockAcq.Ran += ToolBlockAcq_Ran;
-                MyParam.toolBlockAcq.Changed += ToolBlockAcq_Changed;
-                MyParam.toolBlockAcq.Running += ToolBlockAcq_Running;
-                ToolBlock_PrintInfor(MyParam.toolBlockAcq);
+                case 0:
+                    if (!File.Exists(MyParam.common_param.file_tool_acq))
+                        MyParam.common_param.file_tool_acq= MyDefine.file_tool_acq;
+
+                    MyParam.toolBlockAcq = CogSerializer.LoadObjectFromFile(MyParam.common_param.file_tool_acq) as CogToolBlock;
+                    MyParam.toolBlockAcq.Ran += ToolBlockAcq_Ran;
+                    MyParam.toolBlockAcq.Changed += ToolBlockAcq_Changed;
+                    MyParam.toolBlockAcq.Running += ToolBlockAcq_Running;
+                    ToolBlock_PrintInfor(MyParam.toolBlockAcq);
+                    break;
+
+                case 1:
+                    if (!File.Exists(MyParam.common_param.file_tool_process))
+                        MyParam.common_param.file_tool_process = MyDefine.file_tool_process;
+                    MyParam.toolBlockProcess = CogSerializer.LoadObjectFromFile(MyParam.common_param.file_tool_process) as CogToolBlock;
+                    if (MyParam.toolBlockProcess == null)
+                    {
+                        MyLib.ShowDlgError("toolBlockProcess == null!");
+                        return;
+                    }
+
+                    MyParam.toolBlockProcess.Changed += ToolBlockProcess_Changed;
+                    MyParam.toolBlockProcess.Running += ToolBlockProcess_Running;
+                    MyParam.toolBlockProcess.Ran += ToolBlockProcess_Ran;
+
+                    ToolBlock_PrintInfor(MyParam.toolBlockProcess);
+                    break;
+
             }
-            
+
+
 
         }
+        public static void RemoveEvent(int tool_index)
+        {
 
-        private void ToolBlockProcess_Ran(object sender, EventArgs e)
+            switch (tool_index)
+            {
+                case 0:
+                    if (MyParam.toolBlockAcq == null)
+                        return;
+                    MyParam.toolBlockAcq.Ran -= ToolBlockAcq_Ran;
+                    MyParam.toolBlockAcq.Changed -= ToolBlockAcq_Changed;
+                    MyParam.toolBlockAcq.Running -= ToolBlockAcq_Running;
+
+                    break;
+
+                case 1:
+                    if (MyParam.toolBlockProcess == null)
+                        return;
+                    MyParam.toolBlockProcess.Changed -= ToolBlockProcess_Changed;
+                    MyParam.toolBlockProcess.Running -= ToolBlockProcess_Running;
+                    MyParam.toolBlockProcess.Ran -= ToolBlockProcess_Ran;
+                    break;
+
+            }
+
+            
+        }
+
+
+        public static void ReleaseObject()
+        {
+
+            if (MyParam.toolBlockProcess == null)
+                return;
+
+            if (MyParam.toolBlockProcess != null)
+                MyParam.toolBlockProcess.Dispose();
+        }
+
+        private static void ToolBlockProcess_Ran(object sender, EventArgs e)
         {
             Console.WriteLine("ToolBlockProcess_Ran");
+
+            var result = (String)(MyParam.toolBlockProcess.Outputs["IDCode"].Value);
+            Console.WriteLine(result);
+
+            CogResultsAnalysisTool result_tool = (CogResultsAnalysisTool)(MyParam.toolBlockProcess.Tools["CogResultsAnalysisTool1"]);
+            ICogRecord temp_result = result_tool.CreateLastRunRecord();
+            foreach (ICogRecord x in temp_result.SubRecords)
+                Console.WriteLine(x.Annotation);
+
+            //CogResultsAnalysisTool result_tool = (CogResultsAnalysisTool)(MyParam.toolBlockProcess.Tools["CogResultsAnalysisTool1"]);
+            //graphic_IDCode.LastRunRecordEnable |= CogIDLastRunRecordConstants.ResultsCenters;
+
+
+            //Assign picture to display
+            ICogRecord temp = MyParam.toolBlockProcess.CreateLastRunRecord();
+            foreach(ICogRecord x in temp.SubRecords)
+                Console.WriteLine(x.Annotation);
+
+            if(result_tool.Result.Decision == CogToolResultConstants.Accept)
+            {
+                temp = temp.SubRecords["CogFixtureTool1.OutputImage"];
+            }
+            else
+            {
+                temp = temp.SubRecords["CogPMAlignTool1.InputImage"];
+                
+
+            }
+            //var image = temp.Content as CogImage8Grey;
+            //if (image != null)
+            //    MyLib.Display(image, MyParam.cogDisplay, true);
+            
+
+            Console.WriteLine(result_tool.Result.Decision);   
+            MyParam.cogRecordDisplay.Record = temp;
+            MyParam.cogRecordDisplay.Fit(true);
+
         }
 
-        private void ToolBlockProcess_Running(object sender, EventArgs e)
+        private static void ToolBlockProcess_Running(object sender, EventArgs e)
         {
             Console.WriteLine("ToolBlockProcess_Running");
         }
 
-        private void ToolBlockProcess_Changed(object sender, CogChangedEventArgs e)
+        private static void ToolBlockProcess_Changed(object sender, CogChangedEventArgs e)
         {
             Console.WriteLine("ToolBlockProcess_Changed");
         }
 
-        private void ToolBlockAcq_Running(object sender, EventArgs e)
+        private static void ToolBlockAcq_Running(object sender, EventArgs e)
         {
             Console.WriteLine("ToolBlockAcq_Running");
         }
 
-        private void ToolBlockAcq_Changed(object sender, CogChangedEventArgs e)
+        private static void ToolBlockAcq_Changed(object sender, CogChangedEventArgs e)
         {
             Console.WriteLine("ToolBlockAcq_Changed");
         }
 
-        private void ToolBlockAcq_Ran(object sender, EventArgs e)
+        private static void ToolBlockAcq_Ran(object sender, EventArgs e)
         {
             Console.WriteLine("ToolBlockAcq_Ran");
         }
@@ -1087,10 +1183,10 @@ namespace CTTV_VisionInspection.Common
                     openFileDialog.DefaultExt = "json";
                     openFileDialog.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";
                     break;
-                case eTypeFile.File_Bartender:
-                    openFileDialog.Title = "Browse BarTender Files";
-                    openFileDialog.DefaultExt = "btw";
-                    openFileDialog.Filter = "bartender files (*.btw)|*.btw|All files (*.*)|*.*";
+                case eTypeFile.File_Image:
+                    openFileDialog.Title = "Browse Image Files";
+                    openFileDialog.DefaultExt = "bmp";
+                    openFileDialog.Filter = "image files (*.bmp)|*.bmp|All files (*.*)|*.*";
                     break;
 
                 case eTypeFile.File_Excel:
@@ -1391,7 +1487,7 @@ namespace CTTV_VisionInspection.Common
                 }
                 string file_name = GenerateNameImage();
                 Bitmap m = new Bitmap(bm);
-                m.Save(file_name, ImageFormat.Jpeg);
+                m.Save(file_name, ImageFormat.Bmp);
                 //using (MemoryStream memory = new MemoryStream())
                 //{
                 //    using (FileStream fs = new FileStream(file_name, FileMode.Create, FileAccess.ReadWrite))

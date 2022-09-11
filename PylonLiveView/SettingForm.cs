@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VisionPro_Tut.Windows;
 
 namespace PylonLiveView
 {
@@ -19,6 +20,8 @@ namespace PylonLiveView
             InitializeComponent();
 
             FileCAMConfig_Txt.Text = MyParam.common_param.file_cam_config;
+            ToolAcq_Txt.Text = MyParam.common_param.file_tool_acq;
+            ToolProcess_Txt.Text = MyParam.common_param.file_tool_process;
         }
 
         private void LoadCAMConfig_Btn_Click(object sender, EventArgs e)
@@ -79,13 +82,28 @@ namespace PylonLiveView
             string file_toolblock = MyLib.OpenFileDialog(eTypeFile.File_ToolBlock, String.Format($"{MyDefine.workingDirectory}\\Configs"));
             if (file_toolblock != null)
             {
-                MyParam.common_param.file_tool_process = MyDefine.file_tool_process;
+                MyParam.common_param.file_tool_process = file_toolblock;
                 ToolProcess_Txt.Text = file_toolblock;
             }
 
             Console.WriteLine("Reading file {0} back to camera device parameters ...", MyParam.common_param.file_tool_process);
             // Just for demonstration, read the content of the file back to the camera device parameters.
             //MyParam.camera.Parameters.Load(MyParam.common_param.file_cam_config, ParameterPath.CameraDevice);
+        }
+
+        private void ActiveTool_Btn_Click(object sender, EventArgs e)
+        {
+            
+            MyLib.RemoveEvent(ToolSelect_Cbb.SelectedIndex);
+            MyLib.InitObject(ToolSelect_Cbb.SelectedIndex);
+        }
+
+        private void EditTool_Btn_Click(object sender, EventArgs e)
+        {
+            using (ToolBlockWindow win2 = new ToolBlockWindow((TYPE_OF_TOOLBLOCK)ToolSelect_Cbb.SelectedIndex))
+            {
+                win2.ShowDialog();
+            }
         }
     }
 }
