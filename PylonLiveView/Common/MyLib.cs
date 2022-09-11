@@ -568,7 +568,8 @@ namespace CTTV_VisionInspection.Common
         public int frame_height { get; set; }
 
         public string output_text_file { get; set; }
-
+        
+        [JsonIgnore]
         public Queue<byte[]> queue_data = new Queue<byte[]>();
 
         public CommonParam()
@@ -836,10 +837,19 @@ namespace CTTV_VisionInspection.Common
             foreach (ICogRecord x in temp_result.SubRecords)
                 Console.WriteLine(x.Annotation);
 
-            //CogResultsAnalysisTool result_tool = (CogResultsAnalysisTool)(MyParam.toolBlockProcess.Tools["CogResultsAnalysisTool1"]);
-            //graphic_IDCode.LastRunRecordEnable |= CogIDLastRunRecordConstants.ResultsCenters;
+            
+            foreach(ICogTool cogTool in MyParam.toolBlockProcess.Tools)
+            {
+                if (cogTool.RunStatus.Exception != null)
+                {
+                    Console.WriteLine("---Exception---");
+                    Console.WriteLine(cogTool.Name);
+                    Console.WriteLine(cogTool.RunStatus.Exception.Message);
+                }
+            }
 
 
+            
             //Assign picture to display
             ICogRecord temp = MyParam.toolBlockProcess.CreateLastRunRecord();
             
@@ -853,13 +863,18 @@ namespace CTTV_VisionInspection.Common
             else
             {
                 tempResult = temp.SubRecords["CogPMAlignTool1.InputImage"];
-                
+                var image = tempResult.Content as CogImage8Grey;
+                MyLib.Save_BitMap(image.ToBitmap());
 
             }
 
 
             
-            Console.WriteLine(result_tool.Result.Decision);   
+            Console.WriteLine(result_tool.Result.Decision);
+
+            
+
+
             MyParam.cogRecordDisplay.Record = tempResult;
             MyParam.cogRecordDisplay.Fit(true);
 

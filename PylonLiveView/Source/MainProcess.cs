@@ -108,10 +108,10 @@ namespace CTTV_VisionInspection.Common
                     Console.WriteLine("Mat SizeX: {0}", MyParam.mat.Size().Width);
                     Console.WriteLine("Mat SizeY: {0}", MyParam.mat.Size().Height);
                     Console.WriteLine("Mat Channels: {0}", MyParam.mat.Channels());
-                    //var image_file = MyLib.GenerateNameImage();
-                    //bool bWriteOK = Cv2.ImWrite(image_file, MyParam.mat);
-                    //Console.WriteLine("save file {1} = {0}", image_file, bWriteOK);
-                    //if(bWriteOK)
+                    var image_file = MyLib.GenerateNameImage();
+                    bool bWriteOK = Cv2.ImWrite(image_file, MyParam.mat);
+                    Console.WriteLine("save file {1} = {0}", image_file, bWriteOK);
+                    if (bWriteOK)
                     {
                         //Process.Start(image_file);
                         CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
@@ -119,10 +119,12 @@ namespace CTTV_VisionInspection.Common
 
 
                         //process
+                        MyParam.cogRecordDisplay.StaticGraphics.Clear();
+                        MyParam.cogRecordDisplay.InteractiveGraphics.Clear();
                         MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
                         MyParam.toolBlockProcess.Run();
-                        cogImage8Grey.Dispose();
-                        MyParam.mat.Dispose();
+                        //cogImage8Grey.Dispose();
+                        //MyParam.mat.Dispose();
                     }
                 }    
             }
@@ -149,10 +151,12 @@ namespace CTTV_VisionInspection.Common
 
 
                         //process
+                        MyParam.cogRecordDisplay.StaticGraphics.Clear();
+                        MyParam.cogRecordDisplay.InteractiveGraphics.Clear();
                         MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
                         MyParam.toolBlockProcess.Run();
-                        cogImage8Grey.Dispose();
-                        MyParam.mat.Dispose();
+                        //cogImage8Grey.Dispose();
+                        //MyParam.mat.Dispose();
                     }
 
                 }
