@@ -96,33 +96,162 @@ namespace CTTV_VisionInspection.Common
                 Console.WriteLine("src2 = empty");
             } 
             
-
-            if (MyParam.common_param.processed_frame == MyParam.common_param.num_frame)
+            if(!MyParam.common_param.auto_sensor_trigger)
             {
-                StopMergeImage();
-                Console.WriteLine($"Done processing = {MyParam.common_param.processed_frame}");
-
-
-
-                Console.WriteLine("Mat SizeX: {0}", MyParam.mat.Size().Width);
-                Console.WriteLine("Mat SizeY: {0}", MyParam.mat.Size().Height);
-                Console.WriteLine("Mat Channels: {0}", MyParam.mat.Channels());
-                var image_file = MyLib.GenerateNameImage();
-                bool bWriteOK = Cv2.ImWrite(image_file, MyParam.mat);
-                Console.WriteLine("save file {1} = {0}", image_file, bWriteOK);
-                if(bWriteOK)
+                if (MyParam.common_param.processed_frame == MyParam.common_param.num_frame)
                 {
-                    //Process.Start(image_file);
-                    CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
-                    //MyLib.Display(cogImage8Grey, MyParam.cogDisplay, true);
+                    StopMergeImage();
+                    Console.WriteLine($"Done processing = {MyParam.common_param.processed_frame}");
 
 
-                    //process
-                    MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
-                    MyParam.toolBlockProcess.Run();
+
+                    Console.WriteLine("Mat SizeX: {0}", MyParam.mat.Size().Width);
+                    Console.WriteLine("Mat SizeY: {0}", MyParam.mat.Size().Height);
+                    Console.WriteLine("Mat Channels: {0}", MyParam.mat.Channels());
+                    //var image_file = MyLib.GenerateNameImage();
+                    //bool bWriteOK = Cv2.ImWrite(image_file, MyParam.mat);
+                    //Console.WriteLine("save file {1} = {0}", image_file, bWriteOK);
+                    //if(bWriteOK)
+                    {
+                        //Process.Start(image_file);
+                        CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
+                        //MyLib.Display(cogImage8Grey, MyParam.cogDisplay, true);
+
+
+                        //process
+                        MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
+                        MyParam.toolBlockProcess.Run();
+                        cogImage8Grey.Dispose();
+                        MyParam.mat.Dispose();
+                    }
+                }    
+            }
+            else
+            {
+                if(MainProcess.trigger_status == false)
+                {
+                    StopMergeImage();
+                    Console.WriteLine($"Done processing = {MyParam.common_param.processed_frame}");
+
+
+
+                    Console.WriteLine("Mat SizeX: {0}", MyParam.mat.Size().Width);
+                    Console.WriteLine("Mat SizeY: {0}", MyParam.mat.Size().Height);
+                    Console.WriteLine("Mat Channels: {0}", MyParam.mat.Channels());
+                    //var image_file = MyLib.GenerateNameImage();
+                    //bool bWriteOK = Cv2.ImWrite(image_file, MyParam.mat);
+                    //Console.WriteLine("save file {1} = {0}", image_file, bWriteOK);
+                    //if(bWriteOK)
+                    {
+                        //Process.Start(image_file);
+                        CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
+                        //MyLib.Display(cogImage8Grey, MyParam.cogDisplay, true);
+
+
+                        //process
+                        MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
+                        MyParam.toolBlockProcess.Run();
+                        cogImage8Grey.Dispose();
+                        MyParam.mat.Dispose();
+                    }
+
                 }
-            }    
+            }
 
+        }
+
+        #endregion
+
+
+
+        #region task loop -> ScanIO
+
+
+
+        public static void StopScanIO()
+        {
+            MyParam.taskLoops[(int)eTaskLoop.Task_ScanIO].StopLoop();
+        }
+        public static void RunLoopScanIO()
+        {
+                        
+            if (!MyLib.IsCameraConnected())
+            {
+                MyLib.ShowDlgWarning($"Camera not yet connected!");
+                return;
+            }
+            Console.WriteLine("Run task scanIO!");
+            MyParam.taskLoops[(int)eTaskLoop.Task_ScanIO].ResetToken();
+            MyParam.taskLoops[(int)eTaskLoop.Task_ScanIO].RunLoop(MyParam.common_param.time_scan_io, ScanIO).ContinueWith((a) =>
+            {
+                //MyLib.ShowDlgInfor($"Done task merge image!");
+                Console.WriteLine("Done task scanIO!");
+            });
+
+        }
+
+
+        static bool old_state = false;
+        static bool first_read_pulse = false;
+
+        public static bool trigger_status = false;
+        static void ScanIO()
+        {
+
+            
+            if (!MyLib.IsCameraConnected())
+            {
+                MyParam.taskLoops[(int)eTaskLoop.Task_ScanIO].StopLoop();
+                MyLib.ShowDlgWarning($"Camera not yet connected!");
+                return;
+            }
+
+            //scanIO here
+            // Select a line
+            MyParam.camera.Parameters[PLCamera.LineSelector].SetValue(PLCamera.LineSelector.Line1);
+            // Get the status of the line
+            bool status = MyParam.camera.Parameters[PLCamera.LineStatus].GetValue();
+            //Console.WriteLine("status = {0}", status);
+
+            if(!first_read_pulse)
+            {
+                first_read_pulse = true;
+                old_state = status;
+            }
+
+            if(old_state != status)
+            {
+                //have pulse
+                if(status == true) //from 0->1
+                {
+                    trigger_status = true;
+                    MyLib.StartGetFrame();
+                }
+                else //from 1->0
+                {
+                    trigger_status=false;
+                    MyLib.StopGetFrame();
+                }
+
+                //update old_state
+                old_state=status;
+                Console.WriteLine("trigger status = {0}", trigger_status);
+
+            }
+            else
+            {
+
+            }
+
+            //test
+            if(trigger_status == true)
+            {
+                MyLib.StartGetFrame();
+            }    
+            else
+            {
+                MyLib.StopGetFrame();
+            }
         }
 
         #endregion

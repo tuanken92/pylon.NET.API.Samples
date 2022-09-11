@@ -34,17 +34,11 @@ namespace PylonLiveView
             this.splitContainerConfiguration = new System.Windows.Forms.SplitContainer();
             this.deviceListView = new System.Windows.Forms.ListView();
             this.imageListForDeviceList = new System.Windows.Forms.ImageList(this.components);
-            this.Test_Btn = new System.Windows.Forms.Button();
+            this.TestOn_Btn = new System.Windows.Forms.Button();
             this.SettingBtn = new System.Windows.Forms.Button();
             this.CloseCamera_Btn = new System.Windows.Forms.Button();
             this.GetFrame_Btn = new System.Windows.Forms.Button();
             this.num_queue_nbup = new System.Windows.Forms.NumericUpDown();
-            this.exposureTimeSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
-            this.gainSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
-            this.heightSliderControl = new PylonLiveViewControl.IntSliderUserControl();
-            this.widthSliderControl = new PylonLiveViewControl.IntSliderUserControl();
-            this.pixelFormatControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
-            this.testImageControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonOneShot = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonContinuousShot = new System.Windows.Forms.ToolStripButton();
@@ -52,6 +46,14 @@ namespace PylonLiveView
             this.cogRecordDisplay1 = new Cognex.VisionPro.CogRecordDisplay();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.updateDeviceListTimer = new System.Windows.Forms.Timer(this.components);
+            this.TriggerSensor_Chbx = new System.Windows.Forms.CheckBox();
+            this.exposureTimeSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
+            this.gainSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
+            this.heightSliderControl = new PylonLiveViewControl.IntSliderUserControl();
+            this.widthSliderControl = new PylonLiveViewControl.IntSliderUserControl();
+            this.pixelFormatControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
+            this.testImageControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
+            this.TestOff_Btn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerImageView)).BeginInit();
             this.splitContainerImageView.Panel1.SuspendLayout();
             this.splitContainerImageView.Panel2.SuspendLayout();
@@ -103,7 +105,9 @@ namespace PylonLiveView
             // 
             // splitContainerConfiguration.Panel2
             // 
-            this.splitContainerConfiguration.Panel2.Controls.Add(this.Test_Btn);
+            this.splitContainerConfiguration.Panel2.Controls.Add(this.TriggerSensor_Chbx);
+            this.splitContainerConfiguration.Panel2.Controls.Add(this.TestOff_Btn);
+            this.splitContainerConfiguration.Panel2.Controls.Add(this.TestOn_Btn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.SettingBtn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.CloseCamera_Btn);
             this.splitContainerConfiguration.Panel2.Controls.Add(this.GetFrame_Btn);
@@ -141,15 +145,15 @@ namespace PylonLiveView
             this.imageListForDeviceList.ImageSize = new System.Drawing.Size(32, 32);
             this.imageListForDeviceList.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // Test_Btn
+            // TestOn_Btn
             // 
-            this.Test_Btn.Location = new System.Drawing.Point(7, 363);
-            this.Test_Btn.Name = "Test_Btn";
-            this.Test_Btn.Size = new System.Drawing.Size(76, 23);
-            this.Test_Btn.TabIndex = 2;
-            this.Test_Btn.Text = "Test";
-            this.Test_Btn.UseVisualStyleBackColor = true;
-            this.Test_Btn.Click += new System.EventHandler(this.TestBtn_Click);
+            this.TestOn_Btn.Location = new System.Drawing.Point(7, 401);
+            this.TestOn_Btn.Name = "TestOn_Btn";
+            this.TestOn_Btn.Size = new System.Drawing.Size(42, 23);
+            this.TestOn_Btn.TabIndex = 2;
+            this.TestOn_Btn.Text = "ON";
+            this.TestOn_Btn.UseVisualStyleBackColor = true;
+            this.TestOn_Btn.Click += new System.EventHandler(this.TestBtnOn_Click);
             // 
             // SettingBtn
             // 
@@ -187,70 +191,6 @@ namespace PylonLiveView
             this.num_queue_nbup.Name = "num_queue_nbup";
             this.num_queue_nbup.Size = new System.Drawing.Size(120, 20);
             this.num_queue_nbup.TabIndex = 1;
-            // 
-            // exposureTimeSliderControl
-            // 
-            this.exposureTimeSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.exposureTimeSliderControl.DefaultName = "N/A";
-            this.exposureTimeSliderControl.Location = new System.Drawing.Point(0, 264);
-            this.exposureTimeSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
-            this.exposureTimeSliderControl.Name = "exposureTimeSliderControl";
-            this.exposureTimeSliderControl.Size = new System.Drawing.Size(260, 50);
-            this.exposureTimeSliderControl.TabIndex = 6;
-            // 
-            // gainSliderControl
-            // 
-            this.gainSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gainSliderControl.DefaultName = "N/A";
-            this.gainSliderControl.Location = new System.Drawing.Point(0, 214);
-            this.gainSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
-            this.gainSliderControl.Name = "gainSliderControl";
-            this.gainSliderControl.Size = new System.Drawing.Size(264, 50);
-            this.gainSliderControl.TabIndex = 5;
-            // 
-            // heightSliderControl
-            // 
-            this.heightSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.heightSliderControl.DefaultName = "N/A";
-            this.heightSliderControl.Location = new System.Drawing.Point(0, 164);
-            this.heightSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
-            this.heightSliderControl.Name = "heightSliderControl";
-            this.heightSliderControl.Size = new System.Drawing.Size(264, 50);
-            this.heightSliderControl.TabIndex = 4;
-            // 
-            // widthSliderControl
-            // 
-            this.widthSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.widthSliderControl.DefaultName = "N/A";
-            this.widthSliderControl.Location = new System.Drawing.Point(0, 114);
-            this.widthSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
-            this.widthSliderControl.Name = "widthSliderControl";
-            this.widthSliderControl.Size = new System.Drawing.Size(264, 50);
-            this.widthSliderControl.TabIndex = 3;
-            // 
-            // pixelFormatControl
-            // 
-            this.pixelFormatControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pixelFormatControl.DefaultName = "N/A";
-            this.pixelFormatControl.Location = new System.Drawing.Point(12, 57);
-            this.pixelFormatControl.Name = "pixelFormatControl";
-            this.pixelFormatControl.Size = new System.Drawing.Size(236, 57);
-            this.pixelFormatControl.TabIndex = 1;
-            // 
-            // testImageControl
-            // 
-            this.testImageControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.testImageControl.DefaultName = "N/A";
-            this.testImageControl.Location = new System.Drawing.Point(12, 0);
-            this.testImageControl.Name = "testImageControl";
-            this.testImageControl.Size = new System.Drawing.Size(236, 51);
-            this.testImageControl.TabIndex = 0;
             // 
             // toolStrip
             // 
@@ -331,6 +271,91 @@ namespace PylonLiveView
             this.updateDeviceListTimer.Interval = 5000;
             this.updateDeviceListTimer.Tick += new System.EventHandler(this.updateDeviceListTimer_Tick);
             // 
+            // TriggerSensor_Chbx
+            // 
+            this.TriggerSensor_Chbx.AutoSize = true;
+            this.TriggerSensor_Chbx.Location = new System.Drawing.Point(7, 369);
+            this.TriggerSensor_Chbx.Name = "TriggerSensor_Chbx";
+            this.TriggerSensor_Chbx.Size = new System.Drawing.Size(95, 17);
+            this.TriggerSensor_Chbx.TabIndex = 7;
+            this.TriggerSensor_Chbx.Text = "Trigger Sensor";
+            this.TriggerSensor_Chbx.UseVisualStyleBackColor = true;
+            this.TriggerSensor_Chbx.CheckedChanged += new System.EventHandler(this.TriggerSensor_Chbx_CheckedChanged);
+            // 
+            // exposureTimeSliderControl
+            // 
+            this.exposureTimeSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.exposureTimeSliderControl.DefaultName = "N/A";
+            this.exposureTimeSliderControl.Location = new System.Drawing.Point(0, 264);
+            this.exposureTimeSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
+            this.exposureTimeSliderControl.Name = "exposureTimeSliderControl";
+            this.exposureTimeSliderControl.Size = new System.Drawing.Size(260, 50);
+            this.exposureTimeSliderControl.TabIndex = 6;
+            // 
+            // gainSliderControl
+            // 
+            this.gainSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gainSliderControl.DefaultName = "N/A";
+            this.gainSliderControl.Location = new System.Drawing.Point(0, 214);
+            this.gainSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
+            this.gainSliderControl.Name = "gainSliderControl";
+            this.gainSliderControl.Size = new System.Drawing.Size(264, 50);
+            this.gainSliderControl.TabIndex = 5;
+            // 
+            // heightSliderControl
+            // 
+            this.heightSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.heightSliderControl.DefaultName = "N/A";
+            this.heightSliderControl.Location = new System.Drawing.Point(0, 164);
+            this.heightSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
+            this.heightSliderControl.Name = "heightSliderControl";
+            this.heightSliderControl.Size = new System.Drawing.Size(264, 50);
+            this.heightSliderControl.TabIndex = 4;
+            // 
+            // widthSliderControl
+            // 
+            this.widthSliderControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.widthSliderControl.DefaultName = "N/A";
+            this.widthSliderControl.Location = new System.Drawing.Point(0, 114);
+            this.widthSliderControl.MinimumSize = new System.Drawing.Size(225, 50);
+            this.widthSliderControl.Name = "widthSliderControl";
+            this.widthSliderControl.Size = new System.Drawing.Size(264, 50);
+            this.widthSliderControl.TabIndex = 3;
+            // 
+            // pixelFormatControl
+            // 
+            this.pixelFormatControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pixelFormatControl.DefaultName = "N/A";
+            this.pixelFormatControl.Location = new System.Drawing.Point(12, 57);
+            this.pixelFormatControl.Name = "pixelFormatControl";
+            this.pixelFormatControl.Size = new System.Drawing.Size(236, 57);
+            this.pixelFormatControl.TabIndex = 1;
+            // 
+            // testImageControl
+            // 
+            this.testImageControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.testImageControl.DefaultName = "N/A";
+            this.testImageControl.Location = new System.Drawing.Point(12, 0);
+            this.testImageControl.Name = "testImageControl";
+            this.testImageControl.Size = new System.Drawing.Size(236, 51);
+            this.testImageControl.TabIndex = 0;
+            // 
+            // TestOff_Btn
+            // 
+            this.TestOff_Btn.Location = new System.Drawing.Point(60, 401);
+            this.TestOff_Btn.Name = "TestOff_Btn";
+            this.TestOff_Btn.Size = new System.Drawing.Size(42, 23);
+            this.TestOff_Btn.TabIndex = 2;
+            this.TestOff_Btn.Text = "OFF";
+            this.TestOff_Btn.UseVisualStyleBackColor = true;
+            this.TestOff_Btn.Click += new System.EventHandler(this.TestOff_Btn_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -350,6 +375,7 @@ namespace PylonLiveView
             this.splitContainerImageView.ResumeLayout(false);
             this.splitContainerConfiguration.Panel1.ResumeLayout(false);
             this.splitContainerConfiguration.Panel2.ResumeLayout(false);
+            this.splitContainerConfiguration.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerConfiguration)).EndInit();
             this.splitContainerConfiguration.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.num_queue_nbup)).EndInit();
@@ -383,8 +409,10 @@ namespace PylonLiveView
         public PylonLiveViewControl.FloatSliderUserControl gainSliderControl;
         public PylonLiveViewControl.FloatSliderUserControl exposureTimeSliderControl;
         private System.Windows.Forms.Button SettingBtn;
-        private System.Windows.Forms.Button Test_Btn;
+        private System.Windows.Forms.Button TestOn_Btn;
         private Cognex.VisionPro.CogRecordDisplay cogRecordDisplay1;
+        private System.Windows.Forms.CheckBox TriggerSensor_Chbx;
+        private System.Windows.Forms.Button TestOff_Btn;
     }
 }
 

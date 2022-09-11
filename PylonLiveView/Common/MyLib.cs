@@ -55,7 +55,7 @@ namespace CTTV_VisionInspection.Common
     }
     public enum eTaskLoop
     {
-        Task_Test,
+        Task_ScanIO,
         Task_MergeImage,
         Task_MotionUpdateUI,
         Task_TeachingUpdateUI,
@@ -553,9 +553,10 @@ namespace CTTV_VisionInspection.Common
 
     public class CommonParam
     {
-
+        public bool auto_sensor_trigger { get; set; }
 
         public int time_merge_image { get; set; }
+        public int time_scan_io { get; set; }
         public string file_cam_config { get; set; }
         public string file_tool_process { get; set; }
         public string file_tool_acq { get; set; }
@@ -572,7 +573,10 @@ namespace CTTV_VisionInspection.Common
 
         public CommonParam()
         {
+            auto_sensor_trigger = false;
+
             time_merge_image = 10;
+            time_scan_io = 100;
             num_frame = 2;
             frame_width = 4096;
             frame_height = 256;
@@ -687,6 +691,64 @@ namespace CTTV_VisionInspection.Common
     public class MyLib
     {
 
+        public static void ContinuousShot()
+        {
+            try
+            {
+                // Start the grabbing of images until grabbing is stopped.
+                Configuration.AcquireContinuous(MyParam.camera, null);
+                MyParam.camera.StreamGrabber.Start(GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber);
+            }
+            catch (Exception exception)
+            {
+                MyLib.ShowDlgError(exception.Message);
+            }
+        }
+        public static void Stop()
+        {
+            // Stop the grabbing.
+            try
+            {
+                MyParam.camera.StreamGrabber.Stop();
+            }
+            catch (Exception exception)
+            {
+                MyLib.ShowDlgError(exception.Message);
+            }
+        }
+
+        static bool isStartFrame = false;
+        public static void StartGetFrame()
+        {
+            if(isStartFrame)
+            {
+                return;
+            }
+            long max_buffer = MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
+            MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(1000);
+
+            MyParam.common_param.cur_frame = 0;
+            MyParam.common_param.processed_frame = 0;
+            MyParam.bIsFirstImg = false;
+            MyParam.mat.Release();
+            MyParam.common_param.queue_data.Clear();
+            MyParam.common_param.queue_data = new Queue<byte[]>(MyParam.common_param.num_frame);
+            Console.WriteLine("num_queue = {0}, max buffer = {1}", 1000, max_buffer);
+            Console.WriteLine("width = {0}, height = {1}", MyParam.common_param.frame_width, MyParam.common_param.frame_height);
+            MainProcess.RunLoopMergeImage();
+            //start
+            ContinuousShot();
+            isStartFrame = true;
+        }
+
+        public static void StopGetFrame()
+        {
+            Stop(); // Stop the grabbing of images.
+            //MainProcess.trigger_status = false;
+            isStartFrame = false;
+
+
+        }
         public static void InitObject(int tool_index)
         {
             switch (tool_index)
@@ -780,30 +842,42 @@ namespace CTTV_VisionInspection.Common
 
             //Assign picture to display
             ICogRecord temp = MyParam.toolBlockProcess.CreateLastRunRecord();
+            
             foreach(ICogRecord x in temp.SubRecords)
                 Console.WriteLine(x.Annotation);
-
-            if(result_tool.Result.Decision == CogToolResultConstants.Accept)
+            ICogRecord tempResult;
+            if (result_tool.Result.Decision == CogToolResultConstants.Accept)
             {
-                temp = temp.SubRecords["CogFixtureTool1.OutputImage"];
+                tempResult = temp.SubRecords["CogFixtureTool1.OutputImage"];
             }
             else
             {
-                temp = temp.SubRecords["CogPMAlignTool1.InputImage"];
+                tempResult = temp.SubRecords["CogPMAlignTool1.InputImage"];
                 
 
             }
-            //var image = temp.Content as CogImage8Grey;
-            //if (image != null)
-            //    MyLib.Display(image, MyParam.cogDisplay, true);
-            
 
+
+            
             Console.WriteLine(result_tool.Result.Decision);   
-            MyParam.cogRecordDisplay.Record = temp;
+            MyParam.cogRecordDisplay.Record = tempResult;
             MyParam.cogRecordDisplay.Fit(true);
 
+
+            //ReleaseImg(temp);
         }
 
+
+        static void ReleaseImg(ICogRecord temp)
+        {
+            ICogRecord temp1 = temp.SubRecords["CogFixtureTool1.OutputImage"];
+            var image = temp1.Content as CogImage8Grey;
+            image.Dispose();
+
+            ICogRecord temp2 = temp.SubRecords["CogPMAlignTool1.InputImage"];
+            image = temp2.Content as CogImage8Grey;
+            image.Dispose();
+        }
         private static void ToolBlockProcess_Running(object sender, EventArgs e)
         {
             Console.WriteLine("ToolBlockProcess_Running");

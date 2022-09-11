@@ -56,6 +56,9 @@ namespace PylonLiveView
 
             //MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.AcqFifo);
             MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.ImageProcess);
+
+            TriggerSensor_Chbx.Checked = MyParam.common_param.auto_sensor_trigger;
+
         }
 
 
@@ -209,12 +212,13 @@ namespace PylonLiveView
                         Console.WriteLine("Skip display, time process to long = {0}", stopWatch.ElapsedMilliseconds);
                     }
 
-                    if(MyParam.common_param.cur_frame == MyParam.common_param.num_frame)
+                    if(!MyParam.common_param.auto_sensor_trigger)
                     {
-                        Stop();
-                        
-                        //_ =  Async2();
-                        Console.WriteLine("Stop Grab = {0}", MyParam.common_param.num_frame);
+                        if (MyParam.common_param.cur_frame == MyParam.common_param.num_frame)
+                        {
+                            Stop();
+                            Console.WriteLine("Stop Grab = {0}", MyParam.common_param.num_frame);
+                        }
                     }
                 }
                 else
@@ -506,6 +510,8 @@ namespace PylonLiveView
             DestroyCamera();
             MyLib.ReleaseObject();
 
+            MainProcess.StopScanIO();
+            MainProcess.RunLoopMergeImage();
 
             //save param
             UpdateParam();
@@ -548,6 +554,7 @@ namespace PylonLiveView
 
                     // Open the connection to the MyParam.camera device.
                     MyParam.camera.Open();
+                                       
 
                     // Set the parameter for the controls.
                     if (MyParam.camera.Parameters[PLCamera.TestImageSelector].IsWritable)
@@ -581,6 +588,12 @@ namespace PylonLiveView
                     {
                         exposureTimeSliderControl.Parameter = MyParam.camera.Parameters[PLCamera.ExposureTime];
                     }
+
+
+                    //ScanIO
+                    if(MyParam.common_param.auto_sensor_trigger)
+                        MainProcess.RunLoopScanIO();
+
                 }
                 catch (Exception exception)
                 {
@@ -649,6 +662,9 @@ namespace PylonLiveView
 
             if (MyParam.camera.IsOpen)
                 MyParam.camera.Close();
+
+            //ScanIO
+            MainProcess.StopScanIO();
         }
 
         private void SettingBtn_Click(object sender, EventArgs e)
@@ -689,6 +705,56 @@ namespace PylonLiveView
                 cogRecordDisplay1.Location = new System.Drawing.Point(size.Width/2 + 10, 10);
                 cogRecordDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
             }
+        }
+
+        private void TriggerSensor_Chbx_CheckedChanged(object sender, EventArgs e)
+        {
+            MyParam.common_param.auto_sensor_trigger = TriggerSensor_Chbx.Checked;
+            Console.WriteLine("auto_sensor_trigger = " + MyParam.common_param.auto_sensor_trigger);
+
+            GetFrame_Btn.Enabled = !MyParam.common_param.auto_sensor_trigger;
+            if(!MyParam.common_param.auto_sensor_trigger)
+            {
+                MainProcess.StopScanIO();
+            }
+            else
+            {
+                MainProcess.RunLoopScanIO();
+            }
+        }
+
+        private void TestBtnOn_Click(object sender, EventArgs e)
+        {
+            if (MyParam.camera == null)
+                return;
+
+            MainProcess.trigger_status = true;
+            TestOn_Btn.Enabled = false;
+            TestOff_Btn.Enabled = true;
+
+            //// We also increase the number of memory buffers to be used while grabbing.
+            //long max_buffer = MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
+            //MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(1000);
+
+            //MyParam.common_param.cur_frame = 0;
+            //MyParam.common_param.processed_frame = 0;
+            //MyParam.bIsFirstImg = false;
+            //MyParam.mat.Release();
+            //MyParam.common_param.queue_data.Clear();
+            //MyParam.common_param.queue_data = new Queue<byte[]>(MyParam.common_param.num_frame);
+            //Console.WriteLine("num_queue = {0}, max buffer = {1}", 1000, max_buffer);
+            //Console.WriteLine("width = {0}, height = {1}", MyParam.common_param.frame_width, MyParam.common_param.frame_height);
+            //MainProcess.RunLoopMergeImage();
+            ////start
+            //ContinuousShot();
+        }
+
+        private void TestOff_Btn_Click(object sender, EventArgs e)
+        {
+            //Stop(); // Stop the grabbing of images.
+            MainProcess.trigger_status = false;
+            TestOn_Btn.Enabled = true;
+            TestOff_Btn.Enabled = false;
         }
     }
 }

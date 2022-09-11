@@ -97,10 +97,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Cognex\VisionPro\ReferencedAssemblies\Cognex.VisionPro.ToolGroup.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="Cognex.VisionPro3D, Version=71.0.0.0, Culture=neutral, PublicKeyToken=ef0f902af9dee505" />
-    <Reference Include="Cognex.VisionPro3D.Core, Version=71.0.0.0, Culture=neutral, PublicKeyToken=ef0f902af9dee505" />
-    <Reference Include="Cognex.VisionPro3D.Display.Controls, Version=71.0.0.0, Culture=neutral, PublicKeyToken=ef0f902af9dee505" />
-    <Reference Include="Cognex.VisionPro3D.Graphic, Version=71.0.0.0, Culture=neutral, PublicKeyToken=ef0f902af9dee505" />
     <Reference Include="log4net, Version=2.0.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dll\log4net.dll</HintPath>
