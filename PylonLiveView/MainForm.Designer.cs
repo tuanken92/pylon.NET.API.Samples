@@ -34,11 +34,19 @@ namespace PylonLiveView
             this.splitContainerConfiguration = new System.Windows.Forms.SplitContainer();
             this.deviceListView = new System.Windows.Forms.ListView();
             this.imageListForDeviceList = new System.Windows.Forms.ImageList(this.components);
+            this.TriggerSensor_Chbx = new System.Windows.Forms.CheckBox();
+            this.TestOff_Btn = new System.Windows.Forms.Button();
             this.TestOn_Btn = new System.Windows.Forms.Button();
             this.SettingBtn = new System.Windows.Forms.Button();
             this.CloseCamera_Btn = new System.Windows.Forms.Button();
             this.GetFrame_Btn = new System.Windows.Forms.Button();
             this.num_queue_nbup = new System.Windows.Forms.NumericUpDown();
+            this.exposureTimeSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
+            this.gainSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
+            this.heightSliderControl = new PylonLiveViewControl.IntSliderUserControl();
+            this.widthSliderControl = new PylonLiveViewControl.IntSliderUserControl();
+            this.pixelFormatControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
+            this.testImageControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonOneShot = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonContinuousShot = new System.Windows.Forms.ToolStripButton();
@@ -46,14 +54,7 @@ namespace PylonLiveView
             this.cogRecordDisplay1 = new Cognex.VisionPro.CogRecordDisplay();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.updateDeviceListTimer = new System.Windows.Forms.Timer(this.components);
-            this.TriggerSensor_Chbx = new System.Windows.Forms.CheckBox();
-            this.exposureTimeSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
-            this.gainSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
-            this.heightSliderControl = new PylonLiveViewControl.IntSliderUserControl();
-            this.widthSliderControl = new PylonLiveViewControl.IntSliderUserControl();
-            this.pixelFormatControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
-            this.testImageControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
-            this.TestOff_Btn = new System.Windows.Forms.Button();
+            this.cogDisplay1 = new Cognex.VisionPro.Display.CogDisplay();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerImageView)).BeginInit();
             this.splitContainerImageView.Panel1.SuspendLayout();
             this.splitContainerImageView.Panel2.SuspendLayout();
@@ -66,6 +67,7 @@ namespace PylonLiveView
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cogRecordDisplay1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cogDisplay1)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainerImageView
@@ -84,6 +86,7 @@ namespace PylonLiveView
             // splitContainerImageView.Panel2
             // 
             this.splitContainerImageView.Panel2.AutoScroll = true;
+            this.splitContainerImageView.Panel2.Controls.Add(this.cogDisplay1);
             this.splitContainerImageView.Panel2.Controls.Add(this.cogRecordDisplay1);
             this.splitContainerImageView.Panel2.Controls.Add(this.pictureBox);
             this.splitContainerImageView.Size = new System.Drawing.Size(1047, 592);
@@ -145,6 +148,27 @@ namespace PylonLiveView
             this.imageListForDeviceList.ImageSize = new System.Drawing.Size(32, 32);
             this.imageListForDeviceList.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // TriggerSensor_Chbx
+            // 
+            this.TriggerSensor_Chbx.AutoSize = true;
+            this.TriggerSensor_Chbx.Location = new System.Drawing.Point(7, 369);
+            this.TriggerSensor_Chbx.Name = "TriggerSensor_Chbx";
+            this.TriggerSensor_Chbx.Size = new System.Drawing.Size(95, 17);
+            this.TriggerSensor_Chbx.TabIndex = 7;
+            this.TriggerSensor_Chbx.Text = "Trigger Sensor";
+            this.TriggerSensor_Chbx.UseVisualStyleBackColor = true;
+            this.TriggerSensor_Chbx.CheckedChanged += new System.EventHandler(this.TriggerSensor_Chbx_CheckedChanged);
+            // 
+            // TestOff_Btn
+            // 
+            this.TestOff_Btn.Location = new System.Drawing.Point(60, 401);
+            this.TestOff_Btn.Name = "TestOff_Btn";
+            this.TestOff_Btn.Size = new System.Drawing.Size(42, 23);
+            this.TestOff_Btn.TabIndex = 2;
+            this.TestOff_Btn.Text = "OFF";
+            this.TestOff_Btn.UseVisualStyleBackColor = true;
+            this.TestOff_Btn.Click += new System.EventHandler(this.TestOff_Btn_Click);
+            // 
             // TestOn_Btn
             // 
             this.TestOn_Btn.Location = new System.Drawing.Point(7, 401);
@@ -191,96 +215,6 @@ namespace PylonLiveView
             this.num_queue_nbup.Name = "num_queue_nbup";
             this.num_queue_nbup.Size = new System.Drawing.Size(120, 20);
             this.num_queue_nbup.TabIndex = 1;
-            // 
-            // toolStrip
-            // 
-            this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonOneShot,
-            this.toolStripButtonContinuousShot,
-            this.toolStripButtonStop});
-            this.toolStrip.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(261, 39);
-            this.toolStrip.TabIndex = 0;
-            this.toolStrip.Text = "toolStrip";
-            // 
-            // toolStripButtonOneShot
-            // 
-            this.toolStripButtonOneShot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonOneShot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOneShot.Image")));
-            this.toolStripButtonOneShot.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonOneShot.Name = "toolStripButtonOneShot";
-            this.toolStripButtonOneShot.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButtonOneShot.Text = "One Shot";
-            this.toolStripButtonOneShot.ToolTipText = "One Shot";
-            this.toolStripButtonOneShot.Click += new System.EventHandler(this.toolStripButtonOneShot_Click);
-            // 
-            // toolStripButtonContinuousShot
-            // 
-            this.toolStripButtonContinuousShot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonContinuousShot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonContinuousShot.Image")));
-            this.toolStripButtonContinuousShot.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonContinuousShot.Name = "toolStripButtonContinuousShot";
-            this.toolStripButtonContinuousShot.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButtonContinuousShot.Text = "Continuous Shot";
-            this.toolStripButtonContinuousShot.ToolTipText = "Continuous Shot";
-            this.toolStripButtonContinuousShot.Click += new System.EventHandler(this.toolStripButtonContinuousShot_Click);
-            // 
-            // toolStripButtonStop
-            // 
-            this.toolStripButtonStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonStop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonStop.Image")));
-            this.toolStripButtonStop.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonStop.Name = "toolStripButtonStop";
-            this.toolStripButtonStop.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButtonStop.Text = "Stop Grab";
-            this.toolStripButtonStop.ToolTipText = "Stop Grab";
-            this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
-            // 
-            // cogRecordDisplay1
-            // 
-            this.cogRecordDisplay1.ColorMapLowerClipColor = System.Drawing.Color.Black;
-            this.cogRecordDisplay1.ColorMapLowerRoiLimit = 0D;
-            this.cogRecordDisplay1.ColorMapPredefined = Cognex.VisionPro.Display.CogDisplayColorMapPredefinedConstants.None;
-            this.cogRecordDisplay1.ColorMapUpperClipColor = System.Drawing.Color.Black;
-            this.cogRecordDisplay1.ColorMapUpperRoiLimit = 1D;
-            this.cogRecordDisplay1.DoubleTapZoomCycleLength = 2;
-            this.cogRecordDisplay1.DoubleTapZoomSensitivity = 2.5D;
-            this.cogRecordDisplay1.Location = new System.Drawing.Point(500, 8);
-            this.cogRecordDisplay1.MouseWheelMode = Cognex.VisionPro.Display.CogDisplayMouseWheelModeConstants.Zoom1;
-            this.cogRecordDisplay1.MouseWheelSensitivity = 1D;
-            this.cogRecordDisplay1.Name = "cogRecordDisplay1";
-            this.cogRecordDisplay1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cogRecordDisplay1.OcxState")));
-            this.cogRecordDisplay1.Size = new System.Drawing.Size(480, 480);
-            this.cogRecordDisplay1.TabIndex = 26;
-            // 
-            // pictureBox
-            // 
-            this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox.Location = new System.Drawing.Point(5, 8);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(480, 480);
-            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox.TabIndex = 0;
-            this.pictureBox.TabStop = false;
-            // 
-            // updateDeviceListTimer
-            // 
-            this.updateDeviceListTimer.Enabled = true;
-            this.updateDeviceListTimer.Interval = 5000;
-            this.updateDeviceListTimer.Tick += new System.EventHandler(this.updateDeviceListTimer_Tick);
-            // 
-            // TriggerSensor_Chbx
-            // 
-            this.TriggerSensor_Chbx.AutoSize = true;
-            this.TriggerSensor_Chbx.Location = new System.Drawing.Point(7, 369);
-            this.TriggerSensor_Chbx.Name = "TriggerSensor_Chbx";
-            this.TriggerSensor_Chbx.Size = new System.Drawing.Size(95, 17);
-            this.TriggerSensor_Chbx.TabIndex = 7;
-            this.TriggerSensor_Chbx.Text = "Trigger Sensor";
-            this.TriggerSensor_Chbx.UseVisualStyleBackColor = true;
-            this.TriggerSensor_Chbx.CheckedChanged += new System.EventHandler(this.TriggerSensor_Chbx_CheckedChanged);
             // 
             // exposureTimeSliderControl
             // 
@@ -346,15 +280,101 @@ namespace PylonLiveView
             this.testImageControl.Size = new System.Drawing.Size(236, 51);
             this.testImageControl.TabIndex = 0;
             // 
-            // TestOff_Btn
+            // toolStrip
             // 
-            this.TestOff_Btn.Location = new System.Drawing.Point(60, 401);
-            this.TestOff_Btn.Name = "TestOff_Btn";
-            this.TestOff_Btn.Size = new System.Drawing.Size(42, 23);
-            this.TestOff_Btn.TabIndex = 2;
-            this.TestOff_Btn.Text = "OFF";
-            this.TestOff_Btn.UseVisualStyleBackColor = true;
-            this.TestOff_Btn.Click += new System.EventHandler(this.TestOff_Btn_Click);
+            this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonOneShot,
+            this.toolStripButtonContinuousShot,
+            this.toolStripButtonStop});
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(261, 39);
+            this.toolStrip.TabIndex = 0;
+            this.toolStrip.Text = "toolStrip";
+            // 
+            // toolStripButtonOneShot
+            // 
+            this.toolStripButtonOneShot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonOneShot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOneShot.Image")));
+            this.toolStripButtonOneShot.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonOneShot.Name = "toolStripButtonOneShot";
+            this.toolStripButtonOneShot.Size = new System.Drawing.Size(36, 36);
+            this.toolStripButtonOneShot.Text = "One Shot";
+            this.toolStripButtonOneShot.ToolTipText = "One Shot";
+            this.toolStripButtonOneShot.Click += new System.EventHandler(this.toolStripButtonOneShot_Click);
+            // 
+            // toolStripButtonContinuousShot
+            // 
+            this.toolStripButtonContinuousShot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonContinuousShot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonContinuousShot.Image")));
+            this.toolStripButtonContinuousShot.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonContinuousShot.Name = "toolStripButtonContinuousShot";
+            this.toolStripButtonContinuousShot.Size = new System.Drawing.Size(36, 36);
+            this.toolStripButtonContinuousShot.Text = "Continuous Shot";
+            this.toolStripButtonContinuousShot.ToolTipText = "Continuous Shot";
+            this.toolStripButtonContinuousShot.Click += new System.EventHandler(this.toolStripButtonContinuousShot_Click);
+            // 
+            // toolStripButtonStop
+            // 
+            this.toolStripButtonStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonStop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonStop.Image")));
+            this.toolStripButtonStop.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonStop.Name = "toolStripButtonStop";
+            this.toolStripButtonStop.Size = new System.Drawing.Size(36, 36);
+            this.toolStripButtonStop.Text = "Stop Grab";
+            this.toolStripButtonStop.ToolTipText = "Stop Grab";
+            this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
+            // 
+            // cogRecordDisplay1
+            // 
+            this.cogRecordDisplay1.ColorMapLowerClipColor = System.Drawing.Color.Black;
+            this.cogRecordDisplay1.ColorMapLowerRoiLimit = 0D;
+            this.cogRecordDisplay1.ColorMapPredefined = Cognex.VisionPro.Display.CogDisplayColorMapPredefinedConstants.None;
+            this.cogRecordDisplay1.ColorMapUpperClipColor = System.Drawing.Color.Black;
+            this.cogRecordDisplay1.ColorMapUpperRoiLimit = 1D;
+            this.cogRecordDisplay1.DoubleTapZoomCycleLength = 2;
+            this.cogRecordDisplay1.DoubleTapZoomSensitivity = 2.5D;
+            this.cogRecordDisplay1.Location = new System.Drawing.Point(979, 8);
+            this.cogRecordDisplay1.MouseWheelMode = Cognex.VisionPro.Display.CogDisplayMouseWheelModeConstants.Zoom1;
+            this.cogRecordDisplay1.MouseWheelSensitivity = 1D;
+            this.cogRecordDisplay1.Name = "cogRecordDisplay1";
+            this.cogRecordDisplay1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cogRecordDisplay1.OcxState")));
+            this.cogRecordDisplay1.Size = new System.Drawing.Size(480, 480);
+            this.cogRecordDisplay1.TabIndex = 26;
+            // 
+            // pictureBox
+            // 
+            this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox.Location = new System.Drawing.Point(5, 8);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(480, 480);
+            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox.TabIndex = 0;
+            this.pictureBox.TabStop = false;
+            // 
+            // updateDeviceListTimer
+            // 
+            this.updateDeviceListTimer.Enabled = true;
+            this.updateDeviceListTimer.Interval = 5000;
+            this.updateDeviceListTimer.Tick += new System.EventHandler(this.updateDeviceListTimer_Tick);
+            // 
+            // cogDisplay1
+            // 
+            this.cogDisplay1.ColorMapLowerClipColor = System.Drawing.Color.Black;
+            this.cogDisplay1.ColorMapLowerRoiLimit = 0D;
+            this.cogDisplay1.ColorMapPredefined = Cognex.VisionPro.Display.CogDisplayColorMapPredefinedConstants.None;
+            this.cogDisplay1.ColorMapUpperClipColor = System.Drawing.Color.Black;
+            this.cogDisplay1.ColorMapUpperRoiLimit = 1D;
+            this.cogDisplay1.DoubleTapZoomCycleLength = 2;
+            this.cogDisplay1.DoubleTapZoomSensitivity = 2.5D;
+            this.cogDisplay1.Location = new System.Drawing.Point(492, 8);
+            this.cogDisplay1.MouseWheelMode = Cognex.VisionPro.Display.CogDisplayMouseWheelModeConstants.Zoom1;
+            this.cogDisplay1.MouseWheelSensitivity = 1D;
+            this.cogDisplay1.Name = "cogDisplay1";
+            this.cogDisplay1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cogDisplay1.OcxState")));
+            this.cogDisplay1.Size = new System.Drawing.Size(480, 480);
+            this.cogDisplay1.TabIndex = 27;
             // 
             // MainForm
             // 
@@ -383,6 +403,7 @@ namespace PylonLiveView
             this.toolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cogRecordDisplay1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cogDisplay1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -413,6 +434,7 @@ namespace PylonLiveView
         private Cognex.VisionPro.CogRecordDisplay cogRecordDisplay1;
         private System.Windows.Forms.CheckBox TriggerSensor_Chbx;
         private System.Windows.Forms.Button TestOff_Btn;
+        private Cognex.VisionPro.Display.CogDisplay cogDisplay1;
     }
 }
 

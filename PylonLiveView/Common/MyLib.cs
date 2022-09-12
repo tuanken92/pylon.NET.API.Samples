@@ -725,6 +725,7 @@ namespace CTTV_VisionInspection.Common
             {
                 return;
             }
+            Console.WriteLine("---------------> Start Get Frame");
             long max_buffer = MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
             MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(1000);
 
@@ -744,6 +745,7 @@ namespace CTTV_VisionInspection.Common
 
         public static void StopGetFrame()
         {
+            Console.WriteLine("---------------> Stop Get Frame");
             Stop(); // Stop the grabbing of images.
             //MainProcess.trigger_status = false;
             isStartFrame = false;
@@ -856,17 +858,17 @@ namespace CTTV_VisionInspection.Common
             foreach(ICogRecord x in temp.SubRecords)
                 Console.WriteLine(x.Annotation);
             ICogRecord tempResult;
-            if (result_tool.Result.Decision == CogToolResultConstants.Accept)
-            {
                 tempResult = temp.SubRecords["CogFixtureTool1.OutputImage"];
-            }
-            else
-            {
-                tempResult = temp.SubRecords["CogPMAlignTool1.InputImage"];
-                var image = tempResult.Content as CogImage8Grey;
-                MyLib.Save_BitMap(image.ToBitmap());
+            //if (result_tool.Result.Decision == CogToolResultConstants.Accept)
+            //{
+            //}
+            //else
+            //{
+            //    tempResult = temp.SubRecords["CogPMAlignTool1.InputImage"];
+            //    var image = tempResult.Content as CogImage8Grey;
+            //    MyLib.Save_BitMap(image.ToBitmap());
 
-            }
+            //}
 
 
             

@@ -51,7 +51,7 @@ namespace PylonLiveView
             num_queue_nbup.Value = MyParam.common_param.num_frame;
 
 
-            //MyParam.cogDisplay = this.cogDisplay1;
+            MyParam.cogDisplay = this.cogDisplay1;
             MyParam.cogRecordDisplay = this.cogRecordDisplay1;
 
             //MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.AcqFifo);
@@ -406,7 +406,7 @@ namespace PylonLiveView
             try
             {
                 // Start the grabbing of images until grabbing is stopped.
-                Configuration.AcquireContinuous( MyParam.camera, null );
+                //Configuration.AcquireContinuous( MyParam.camera, null );
                 MyParam.camera.StreamGrabber.Start( GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber );
             }
             catch (Exception exception)
@@ -511,7 +511,7 @@ namespace PylonLiveView
             MyLib.ReleaseObject();
 
             MainProcess.StopScanIO();
-            MainProcess.RunLoopMergeImage();
+            MainProcess.StopMergeImage();
 
             //save param
             UpdateParam();
@@ -699,10 +699,10 @@ namespace PylonLiveView
                 Console.WriteLine($"{size.Width}, {size.Height}");
                 pictureBox.Location = new System.Drawing.Point(10, 10);
                 pictureBox.Size= new System.Drawing.Size(size.Width/2 - 10, size.Height - 30);
-                //cogDisplay1.Location = new System.Drawing.Point(size.Width/2 + 10, 10);
-                //cogDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
-                
-                cogRecordDisplay1.Location = new System.Drawing.Point(size.Width/2 + 10, 10);
+                cogDisplay1.Location = new System.Drawing.Point(size.Width / 2 + 10, 10);
+                cogDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
+
+                cogRecordDisplay1.Location = new System.Drawing.Point(size.Width + 10, 10);
                 cogRecordDisplay1.Size = new System.Drawing.Size(size.Width / 2 - 10, size.Height - 30);
             }
         }

@@ -65,10 +65,53 @@ namespace CTTV_VisionInspection.Common
                 //Console.WriteLine($"MyParam.common_param.queue_data.Count = {MyParam.common_param.queue_data.Count}");
                 if (MyParam.common_param.queue_data.Count == 0)
                 {
+                    //Console.WriteLine("Queue = 0 -> return, {0} - {1}", 
+                    //    MyParam.common_param.processed_frame,
+                    //    MyParam.common_param.cur_frame);
+
+                    //Consider processing done!
+                    if(MyParam.common_param.auto_sensor_trigger && !MainProcess.trigger_status && MyParam.common_param.processed_frame != 0)
+                    {
+                        if (MyParam.common_param.processed_frame == MyParam.common_param.cur_frame)
+                        {
+                            StopMergeImage();
+                            Console.WriteLine($"Done processing = {MyParam.common_param.processed_frame}");
+
+
+
+                            Console.WriteLine("Mat SizeX: {0}", MyParam.mat.Size().Width);
+                            Console.WriteLine("Mat SizeY: {0}", MyParam.mat.Size().Height);
+                            Console.WriteLine("Mat Channels: {0}", MyParam.mat.Channels());
+                            var image_file = MyLib.GenerateNameImage();
+                            bool bWriteOK = Cv2.ImWrite(image_file, MyParam.mat);
+                            Console.WriteLine("save file {1} = {0}", image_file, bWriteOK);
+                            if (bWriteOK)
+                            {
+                                //Process.Start(image_file);
+                                CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
+                                MyParam.cogDisplay.Image = cogImage8Grey;
+
+
+                                //process
+                                MyParam.cogRecordDisplay.StaticGraphics.Clear();
+                                MyParam.cogRecordDisplay.InteractiveGraphics.Clear();
+                                MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
+                                MyParam.toolBlockProcess.Run();
+                                //cogImage8Grey.Dispose();
+                                //MyParam.mat.Dispose();
+                            }
+                        }
+                    }
+                    
+
                     return;
                 }
-                MyParam.common_param.processed_frame++;
-                data = MyParam.common_param.queue_data.Dequeue();
+                else
+                {
+                    MyParam.common_param.processed_frame++;
+                    Console.WriteLine("Queue processed = {0}", MyParam.common_param.processed_frame);
+                    data = MyParam.common_param.queue_data.Dequeue();
+                }
             }
 
             //decode 2
@@ -76,10 +119,6 @@ namespace CTTV_VisionInspection.Common
             src2.SetArray(data);
             if (!src2.Empty())
             {
-                //Console.WriteLine("Mat SizeX: {0}", src2.Size().Width);
-                //Console.WriteLine("Mat SizeY: {0}", src2.Size().Height);
-                //Console.WriteLine("Mat Channels: {0}", src2.Channels());
-
                 if (!MyParam.bIsFirstImg)
                 {
                     MyParam.bIsFirstImg = true;
@@ -89,14 +128,15 @@ namespace CTTV_VisionInspection.Common
                 {
                     Cv2.VConcat(MyParam.mat, src2, MyParam.mat);
                 }
-                src2.Release();
             }
             else
             {
                 Console.WriteLine("src2 = empty");
-            } 
-            
-            if(!MyParam.common_param.auto_sensor_trigger)
+            }
+            src2.Release();
+
+            //Consider processing done!
+            if (!MyParam.common_param.auto_sensor_trigger)
             {
                 if (MyParam.common_param.processed_frame == MyParam.common_param.num_frame)
                 {
@@ -126,11 +166,11 @@ namespace CTTV_VisionInspection.Common
                         //cogImage8Grey.Dispose();
                         //MyParam.mat.Dispose();
                     }
-                }    
+                }
             }
             else
             {
-                if(MainProcess.trigger_status == false)
+                if (MainProcess.trigger_status == false && MyParam.common_param.queue_data.Count == 0)
                 {
                     StopMergeImage();
                     Console.WriteLine($"Done processing = {MyParam.common_param.processed_frame}");
@@ -212,7 +252,7 @@ namespace CTTV_VisionInspection.Common
 
             //scanIO here
             // Select a line
-            MyParam.camera.Parameters[PLCamera.LineSelector].SetValue(PLCamera.LineSelector.Line1);
+            MyParam.camera.Parameters[PLCamera.LineSelector].SetValue(PLCamera.LineSelector.Line3);
             // Get the status of the line
             bool status = MyParam.camera.Parameters[PLCamera.LineStatus].GetValue();
             //Console.WriteLine("status = {0}", status);
@@ -248,14 +288,14 @@ namespace CTTV_VisionInspection.Common
             }
 
             //test
-            if(trigger_status == true)
-            {
-                MyLib.StartGetFrame();
-            }    
-            else
-            {
-                MyLib.StopGetFrame();
-            }
+            //if(trigger_status == true)
+            //{
+            //    MyLib.StartGetFrame();
+            //}    
+            //else
+            //{
+            //    MyLib.StopGetFrame();
+            //}
         }
 
         #endregion

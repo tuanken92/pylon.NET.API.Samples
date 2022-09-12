@@ -78,7 +78,7 @@ namespace CTTV_VisionInspection.Common
 
         public static readonly string file_config = String.Format($"{workingDirectory}\\Configs\\config_param.json");
         public static readonly string file_camera_config = String.Format($"{workingDirectory}\\Configs\\CameraParameters.pfs");
-        public static readonly string file_tool_process = String.Format($"{workingDirectory}\\Configs\\Tool_Process.vpp");
+        public static readonly string file_tool_process = String.Format($"{workingDirectory}\\Configs\\TB_PatmaxTest.vpp");
         public static readonly string file_tool_acq = String.Format($"{workingDirectory}\\Configs\\Tool_Acq.vpp");
         public static readonly string file_excel = String.Format($"{workingDirectory}\\Data\\ImportData.xlsx");
 
