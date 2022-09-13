@@ -248,6 +248,12 @@
     <None Include="app.config" />
     <None Include="Configs\CameraParameters.pfs" />
     <None Include="Configs\config_param.json" />
+    <None Include="Configs\Demo_TB_OK_Empty.vpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Configs\Demo_TB_OK_Full.vpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

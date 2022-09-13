@@ -64,7 +64,7 @@ namespace VisionPro_Tut.Windows
                 case "Load":
                     string file_image = MyLib.OpenFileDialog(eTypeFile.File_Image);
                     //MyParam.toolBlockProcess.Inputs["Image"].Value = new CogImage8Grey(MyParam.mat.ToBitmap()); ;
-                    MyParam.toolBlockProcess.Inputs["Image"].Value = new CogImage8Grey(new System.Drawing.Bitmap(file_image));
+                    MyParam.toolBlockProcess.Inputs[0].Value = new CogImage8Grey(new System.Drawing.Bitmap(file_image));
                     break;
                 case "Save":
                     Console.WriteLine($"Save file {this.path_vpp_file}");

@@ -707,12 +707,24 @@ namespace PylonLiveView
             }
         }
 
+
+        static bool bFistInit = false;
         private void TriggerSensor_Chbx_CheckedChanged(object sender, EventArgs e)
         {
+
             MyParam.common_param.auto_sensor_trigger = TriggerSensor_Chbx.Checked;
             Console.WriteLine("auto_sensor_trigger = " + MyParam.common_param.auto_sensor_trigger);
 
             GetFrame_Btn.Enabled = !MyParam.common_param.auto_sensor_trigger;
+            
+
+            //Ignore first init!
+            if(!bFistInit)
+            {
+                bFistInit = true;
+                return;
+            }
+
             if(!MyParam.common_param.auto_sensor_trigger)
             {
                 MainProcess.StopScanIO();

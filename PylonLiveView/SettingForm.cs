@@ -105,5 +105,10 @@ namespace PylonLiveView
                 win2.ShowDialog();
             }
         }
+
+        private void SaveConfig_Btn_Click(object sender, EventArgs e)
+        {
+            SaveLoadParameter.Save_Parameter(MyParam.common_param, MyDefine.file_config);
+        }
     }
 }

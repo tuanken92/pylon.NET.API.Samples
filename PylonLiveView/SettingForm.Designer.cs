@@ -42,6 +42,7 @@
             this.ToolSelect_Cbb = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.EditTool_Btn = new System.Windows.Forms.Button();
+            this.SaveConfig_Btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -173,11 +174,22 @@
             this.EditTool_Btn.UseVisualStyleBackColor = true;
             this.EditTool_Btn.Click += new System.EventHandler(this.EditTool_Btn_Click);
             // 
+            // SaveConfig_Btn
+            // 
+            this.SaveConfig_Btn.Location = new System.Drawing.Point(617, 262);
+            this.SaveConfig_Btn.Name = "SaveConfig_Btn";
+            this.SaveConfig_Btn.Size = new System.Drawing.Size(91, 42);
+            this.SaveConfig_Btn.TabIndex = 5;
+            this.SaveConfig_Btn.Text = "Save";
+            this.SaveConfig_Btn.UseVisualStyleBackColor = true;
+            this.SaveConfig_Btn.Click += new System.EventHandler(this.SaveConfig_Btn_Click);
+            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(732, 325);
+            this.Controls.Add(this.SaveConfig_Btn);
             this.Controls.Add(this.ToolSelect_Cbb);
             this.Controls.Add(this.SaveCAMConfig_Btn);
             this.Controls.Add(this.EditTool_Btn);
@@ -215,5 +227,6 @@
         private System.Windows.Forms.ComboBox ToolSelect_Cbb;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button EditTool_Btn;
+        private System.Windows.Forms.Button SaveConfig_Btn;
     }
 }

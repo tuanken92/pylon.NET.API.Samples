@@ -734,7 +734,7 @@ namespace CTTV_VisionInspection.Common
             MyParam.bIsFirstImg = false;
             MyParam.mat.Release();
             MyParam.common_param.queue_data.Clear();
-            MyParam.common_param.queue_data = new Queue<byte[]>(MyParam.common_param.num_frame);
+            //MyParam.common_param.queue_data = new Queue<byte[]>(MyParam.common_param.num_frame);
             Console.WriteLine("num_queue = {0}, max buffer = {1}", 1000, max_buffer);
             Console.WriteLine("width = {0}, height = {1}", MyParam.common_param.frame_width, MyParam.common_param.frame_height);
             MainProcess.RunLoopMergeImage();
@@ -831,24 +831,24 @@ namespace CTTV_VisionInspection.Common
         {
             Console.WriteLine("ToolBlockProcess_Ran");
 
-            var result = (String)(MyParam.toolBlockProcess.Outputs["IDCode"].Value);
-            Console.WriteLine(result);
+            //var result = (String)(MyParam.toolBlockProcess.Outputs["IDCode"].Value);
+            //Console.WriteLine(result);
 
-            CogResultsAnalysisTool result_tool = (CogResultsAnalysisTool)(MyParam.toolBlockProcess.Tools["CogResultsAnalysisTool1"]);
-            ICogRecord temp_result = result_tool.CreateLastRunRecord();
-            foreach (ICogRecord x in temp_result.SubRecords)
-                Console.WriteLine(x.Annotation);
+            //CogResultsAnalysisTool result_tool = (CogResultsAnalysisTool)(MyParam.toolBlockProcess.Tools["CogResultsAnalysisTool1"]);
+            //ICogRecord temp_result = result_tool.CreateLastRunRecord();
+            //foreach (ICogRecord x in temp_result.SubRecords)
+            //    Console.WriteLine(x.Annotation);
 
             
-            foreach(ICogTool cogTool in MyParam.toolBlockProcess.Tools)
-            {
-                if (cogTool.RunStatus.Exception != null)
-                {
-                    Console.WriteLine("---Exception---");
-                    Console.WriteLine(cogTool.Name);
-                    Console.WriteLine(cogTool.RunStatus.Exception.Message);
-                }
-            }
+            //foreach(ICogTool cogTool in MyParam.toolBlockProcess.Tools)
+            //{
+            //    if (cogTool.RunStatus.Exception != null)
+            //    {
+            //        Console.WriteLine("---Exception---");
+            //        Console.WriteLine(cogTool.Name);
+            //        Console.WriteLine(cogTool.RunStatus.Exception.Message);
+            //    }
+            //}
 
 
             
@@ -857,8 +857,9 @@ namespace CTTV_VisionInspection.Common
             
             foreach(ICogRecord x in temp.SubRecords)
                 Console.WriteLine(x.Annotation);
-            ICogRecord tempResult;
-                tempResult = temp.SubRecords["CogFixtureTool1.OutputImage"];
+            
+            //ICogRecord tempResult = temp.SubRecords["CogFixtureTool1.OutputImage"];
+            ICogRecord tempResult = temp.SubRecords[temp.SubRecords.Count-1];
             //if (result_tool.Result.Decision == CogToolResultConstants.Accept)
             //{
             //}
@@ -872,13 +873,15 @@ namespace CTTV_VisionInspection.Common
 
 
             
-            Console.WriteLine(result_tool.Result.Decision);
+            //Console.WriteLine(result_tool.Result.Decision);
 
             
+            if(tempResult != null)
+            {
+                MyParam.cogRecordDisplay.Record = tempResult;
+                MyParam.cogRecordDisplay.Fit(true);
+            }
 
-
-            MyParam.cogRecordDisplay.Record = tempResult;
-            MyParam.cogRecordDisplay.Fit(true);
 
 
             //ReleaseImg(temp);
