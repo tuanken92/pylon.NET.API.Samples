@@ -248,6 +248,7 @@
     <None Include="app.config" />
     <None Include="Configs\CameraParameters.pfs" />
     <None Include="Configs\config_param.json" />
+    <None Include="Configs\Demo_OK_Redline.vpp" />
     <None Include="Configs\Demo_TB_OK_Empty.vpp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

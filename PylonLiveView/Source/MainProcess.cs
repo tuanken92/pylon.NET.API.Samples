@@ -95,7 +95,7 @@ namespace CTTV_VisionInspection.Common
                                 //process
                                 MyParam.cogRecordDisplay.StaticGraphics.Clear();
                                 MyParam.cogRecordDisplay.InteractiveGraphics.Clear();
-                                MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
+                                MyParam.toolBlockProcess.Inputs[0].Value = cogImage8Grey;
                                 MyParam.toolBlockProcess.Run();
                                 //cogImage8Grey.Dispose();
                                 //MyParam.mat.Dispose();
@@ -161,7 +161,7 @@ namespace CTTV_VisionInspection.Common
                         //process
                         MyParam.cogRecordDisplay.StaticGraphics.Clear();
                         MyParam.cogRecordDisplay.InteractiveGraphics.Clear();
-                        MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
+                        MyParam.toolBlockProcess.Inputs[0].Value = cogImage8Grey;
                         MyParam.toolBlockProcess.Run();
                         //cogImage8Grey.Dispose();
                         //MyParam.mat.Dispose();
@@ -193,7 +193,7 @@ namespace CTTV_VisionInspection.Common
                         //process
                         MyParam.cogRecordDisplay.StaticGraphics.Clear();
                         MyParam.cogRecordDisplay.InteractiveGraphics.Clear();
-                        MyParam.toolBlockProcess.Inputs["Image"].Value = cogImage8Grey;
+                        MyParam.toolBlockProcess.Inputs[0].Value = cogImage8Grey;
                         MyParam.toolBlockProcess.Run();
                         //cogImage8Grey.Dispose();
                         //MyParam.mat.Dispose();
