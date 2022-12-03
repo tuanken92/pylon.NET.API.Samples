@@ -55,7 +55,7 @@ namespace PylonLiveView
             MyParam.cogRecordDisplay = this.cogRecordDisplay1;
 
             //MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.AcqFifo);
-            //MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.ImageProcess);
+            MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.ImageProcess);
 
             TriggerSensor_Chbx.Checked = MyParam.common_param.auto_sensor_trigger;
 
