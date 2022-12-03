@@ -34,6 +34,8 @@ namespace PylonLiveView
             this.splitContainerConfiguration = new System.Windows.Forms.SplitContainer();
             this.deviceListView = new System.Windows.Forms.ListView();
             this.imageListForDeviceList = new System.Windows.Forms.ImageList(this.components);
+            this.TriggerSensor_Chbx = new System.Windows.Forms.CheckBox();
+            this.TestOff_Btn = new System.Windows.Forms.Button();
             this.TestOn_Btn = new System.Windows.Forms.Button();
             this.SettingBtn = new System.Windows.Forms.Button();
             this.CloseCamera_Btn = new System.Windows.Forms.Button();
@@ -46,14 +48,13 @@ namespace PylonLiveView
             this.cogRecordDisplay1 = new Cognex.VisionPro.CogRecordDisplay();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.updateDeviceListTimer = new System.Windows.Forms.Timer(this.components);
-            this.TriggerSensor_Chbx = new System.Windows.Forms.CheckBox();
+            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.exposureTimeSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
             this.gainSliderControl = new PylonLiveViewControl.FloatSliderUserControl();
             this.heightSliderControl = new PylonLiveViewControl.IntSliderUserControl();
             this.widthSliderControl = new PylonLiveViewControl.IntSliderUserControl();
             this.pixelFormatControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
             this.testImageControl = new PylonLiveViewControl.EnumerationComboBoxUserControl();
-            this.TestOff_Btn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerImageView)).BeginInit();
             this.splitContainerImageView.Panel1.SuspendLayout();
             this.splitContainerImageView.Panel2.SuspendLayout();
@@ -144,6 +145,27 @@ namespace PylonLiveView
             this.imageListForDeviceList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.imageListForDeviceList.ImageSize = new System.Drawing.Size(32, 32);
             this.imageListForDeviceList.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // TriggerSensor_Chbx
+            // 
+            this.TriggerSensor_Chbx.AutoSize = true;
+            this.TriggerSensor_Chbx.Location = new System.Drawing.Point(7, 369);
+            this.TriggerSensor_Chbx.Name = "TriggerSensor_Chbx";
+            this.TriggerSensor_Chbx.Size = new System.Drawing.Size(95, 17);
+            this.TriggerSensor_Chbx.TabIndex = 7;
+            this.TriggerSensor_Chbx.Text = "Trigger Sensor";
+            this.TriggerSensor_Chbx.UseVisualStyleBackColor = true;
+            this.TriggerSensor_Chbx.CheckedChanged += new System.EventHandler(this.TriggerSensor_Chbx_CheckedChanged);
+            // 
+            // TestOff_Btn
+            // 
+            this.TestOff_Btn.Location = new System.Drawing.Point(60, 401);
+            this.TestOff_Btn.Name = "TestOff_Btn";
+            this.TestOff_Btn.Size = new System.Drawing.Size(42, 23);
+            this.TestOff_Btn.TabIndex = 2;
+            this.TestOff_Btn.Text = "OFF";
+            this.TestOff_Btn.UseVisualStyleBackColor = true;
+            this.TestOff_Btn.Click += new System.EventHandler(this.TestOff_Btn_Click);
             // 
             // TestOn_Btn
             // 
@@ -247,7 +269,7 @@ namespace PylonLiveView
             this.cogRecordDisplay1.ColorMapUpperRoiLimit = 1D;
             this.cogRecordDisplay1.DoubleTapZoomCycleLength = 2;
             this.cogRecordDisplay1.DoubleTapZoomSensitivity = 2.5D;
-            this.cogRecordDisplay1.Location = new System.Drawing.Point(500, 8);
+            this.cogRecordDisplay1.Location = new System.Drawing.Point(388, 8);
             this.cogRecordDisplay1.MouseWheelMode = Cognex.VisionPro.Display.CogDisplayMouseWheelModeConstants.Zoom1;
             this.cogRecordDisplay1.MouseWheelSensitivity = 1D;
             this.cogRecordDisplay1.Name = "cogRecordDisplay1";
@@ -260,7 +282,7 @@ namespace PylonLiveView
             this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox.Location = new System.Drawing.Point(5, 8);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(480, 480);
+            this.pictureBox.Size = new System.Drawing.Size(370, 480);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
@@ -270,17 +292,6 @@ namespace PylonLiveView
             this.updateDeviceListTimer.Enabled = true;
             this.updateDeviceListTimer.Interval = 5000;
             this.updateDeviceListTimer.Tick += new System.EventHandler(this.updateDeviceListTimer_Tick);
-            // 
-            // TriggerSensor_Chbx
-            // 
-            this.TriggerSensor_Chbx.AutoSize = true;
-            this.TriggerSensor_Chbx.Location = new System.Drawing.Point(7, 369);
-            this.TriggerSensor_Chbx.Name = "TriggerSensor_Chbx";
-            this.TriggerSensor_Chbx.Size = new System.Drawing.Size(95, 17);
-            this.TriggerSensor_Chbx.TabIndex = 7;
-            this.TriggerSensor_Chbx.Text = "Trigger Sensor";
-            this.TriggerSensor_Chbx.UseVisualStyleBackColor = true;
-            this.TriggerSensor_Chbx.CheckedChanged += new System.EventHandler(this.TriggerSensor_Chbx_CheckedChanged);
             // 
             // exposureTimeSliderControl
             // 
@@ -346,16 +357,6 @@ namespace PylonLiveView
             this.testImageControl.Size = new System.Drawing.Size(236, 51);
             this.testImageControl.TabIndex = 0;
             // 
-            // TestOff_Btn
-            // 
-            this.TestOff_Btn.Location = new System.Drawing.Point(60, 401);
-            this.TestOff_Btn.Name = "TestOff_Btn";
-            this.TestOff_Btn.Size = new System.Drawing.Size(42, 23);
-            this.TestOff_Btn.TabIndex = 2;
-            this.TestOff_Btn.Text = "OFF";
-            this.TestOff_Btn.UseVisualStyleBackColor = true;
-            this.TestOff_Btn.Click += new System.EventHandler(this.TestOff_Btn_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -413,6 +414,7 @@ namespace PylonLiveView
         private Cognex.VisionPro.CogRecordDisplay cogRecordDisplay1;
         private System.Windows.Forms.CheckBox TriggerSensor_Chbx;
         private System.Windows.Forms.Button TestOff_Btn;
+        private System.IO.Ports.SerialPort serialPort1;
     }
 }
 

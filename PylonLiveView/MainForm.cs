@@ -55,7 +55,7 @@ namespace PylonLiveView
             MyParam.cogRecordDisplay = this.cogRecordDisplay1;
 
             //MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.AcqFifo);
-            MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.ImageProcess);
+            //MyLib.InitObject((int)TYPE_OF_TOOLBLOCK.ImageProcess);
 
             TriggerSensor_Chbx.Checked = MyParam.common_param.auto_sensor_trigger;
 
@@ -79,7 +79,7 @@ namespace PylonLiveView
         // Occurs when the stop frame acquisition button is clicked.
         private void toolStripButtonStop_Click( object sender, EventArgs e )
         {
-            Stop(); // Stop the grabbing of images.
+            StopGrab(); // Stop the grabbing of images.
         }
 
 
@@ -97,6 +97,8 @@ namespace PylonLiveView
             DestroyCamera();
             // Because one device is gone, the list needs to be updated.
             UpdateDeviceList();
+
+            MyLib.ShowDlgWarning("Lost connection to camera");
         }
 
 
@@ -173,15 +175,19 @@ namespace PylonLiveView
                 // Check if the image can be displayed.
                 if (grabResult.IsValid)
                 {
+                    //tuanna-todo: care when live camera -> don't push frame to queue
                     
                     //push to queue
-                    lock(MyParam.lockObject)
+                    if(MyLib.isStartFrame)
                     {
-                        byte[] buffer = grabResult.PixelData as byte[];
-                        MyParam.common_param.queue_data.Enqueue(buffer);
-                        MyParam.common_param.cur_frame++;
-                        Console.WriteLine("Push to queue = {0}", MyParam.common_param.cur_frame);
-                    }    
+                        lock(MyParam.lockObject)
+                        {
+                            byte[] buffer = grabResult.PixelData as byte[];
+                            MyParam.common_param.queue_data.Enqueue(buffer);
+                            MyParam.common_param.cur_frame++;
+                            Console.WriteLine("Push to queue = {0}", MyParam.common_param.cur_frame);
+                        }    
+                    }
 
                     // Reduce the number of displayed images to a reasonable amount if the MyParam.camera is acquiring images very fast.
                     if (!stopWatch.IsRunning || stopWatch.ElapsedMilliseconds > 33)
@@ -216,7 +222,7 @@ namespace PylonLiveView
                     {
                         if (MyParam.common_param.cur_frame == MyParam.common_param.num_frame)
                         {
-                            Stop();
+                            StopGrab();
                             Console.WriteLine("Stop Grab = {0}", MyParam.common_param.num_frame);
                         }
                     }
@@ -238,20 +244,6 @@ namespace PylonLiveView
         }
 
 
-        public async Task Async2()
-        {
-
-            Action myaction = () => {
-                //MergeImage();
-            };
-            Task task = new Task(myaction);
-            task.Start();
-
-            await task;
-
-            Console.WriteLine("Get Image done!");
-
-        }
 
 
         
@@ -331,7 +323,7 @@ namespace PylonLiveView
 
 
         // Stops the grabbing of images and handles exceptions.
-        private void Stop()
+        private void StopGrab()
         {
             // Stop the grabbing.
             try
@@ -511,7 +503,7 @@ namespace PylonLiveView
             MyLib.ReleaseObject();
 
             MainProcess.StopScanIO();
-            MainProcess.RunLoopMergeImage();
+            MainProcess.StopMergeImage();
 
             //save param
             UpdateParam();
@@ -677,17 +669,7 @@ namespace PylonLiveView
 
         
 
-        private void TestBtn_Click(object sender, EventArgs e)
-        {
-            //Display(true);
-            
-            //Display(false);
-
-            
-            //CogImage8Grey cogImage8Grey = new CogImage8Grey(MyParam.mat.ToBitmap());
-            //cogDisplay1.Image = cogImage8Grey;
-
-        }
+ 
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
@@ -729,30 +711,39 @@ namespace PylonLiveView
                 return;
 
             MainProcess.trigger_status = true;
+            MyLib.isStartFrame = true;
             TestOn_Btn.Enabled = false;
             TestOff_Btn.Enabled = true;
 
-            //// We also increase the number of memory buffers to be used while grabbing.
-            //long max_buffer = MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
-            //MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(1000);
 
-            //MyParam.common_param.cur_frame = 0;
-            //MyParam.common_param.processed_frame = 0;
-            //MyParam.bIsFirstImg = false;
-            //MyParam.mat.Release();
-            //MyParam.common_param.queue_data.Clear();
-            //MyParam.common_param.queue_data = new Queue<byte[]>(MyParam.common_param.num_frame);
-            //Console.WriteLine("num_queue = {0}, max buffer = {1}", 1000, max_buffer);
-            //Console.WriteLine("width = {0}, height = {1}", MyParam.common_param.frame_width, MyParam.common_param.frame_height);
-            //MainProcess.RunLoopMergeImage();
-            ////start
-            //ContinuousShot();
+            #region test get frame
+            
+            // We also increase the number of memory buffers to be used while grabbing.
+            long max_buffer = MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].GetMaximum();
+
+            MyParam.camera.Parameters[PLCameraInstance.MaxNumBuffer].SetValue(MyParam.common_param.num_frame);
+
+            UpdateParam();
+            MyParam.common_param.cur_frame = 0;
+            MyParam.common_param.processed_frame = 0;
+            MyParam.bIsFirstImg = false;
+            MyParam.mat.Release();
+            MyParam.common_param.queue_data.Clear();
+            MyParam.common_param.queue_data = new Queue<byte[]>(MyParam.common_param.num_frame);
+            Console.WriteLine("num_queue = {0}, real = {1}, max buffer = {2}", MyParam.common_param.num_frame, num_queue_nbup.Value, max_buffer);
+            Console.WriteLine("width = {0}, height = {1}", MyParam.common_param.frame_width, MyParam.common_param.frame_height);
+            MainProcess.RunLoopMergeImage();
+            //start
+            ContinuousShot();
+
+            #endregion
         }
 
         private void TestOff_Btn_Click(object sender, EventArgs e)
         {
             //Stop(); // Stop the grabbing of images.
             MainProcess.trigger_status = false;
+            MyLib.isStartFrame = false;
             TestOn_Btn.Enabled = true;
             TestOff_Btn.Enabled = false;
         }

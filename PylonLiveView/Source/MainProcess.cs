@@ -39,7 +39,7 @@ namespace CTTV_VisionInspection.Common
             MyParam.common_param.frame_height = (int)MyParam.camera.Parameters[PLCamera.Height].GetValue();
 
             MyParam.taskLoops[(int)eTaskLoop.Task_MergeImage].ResetToken();
-            MyParam.taskLoops[(int)eTaskLoop.Task_MergeImage].RunLoop(MyParam.common_param.time_merge_image, UpdatePLCRegister).ContinueWith((a) =>
+            MyParam.taskLoops[(int)eTaskLoop.Task_MergeImage].RunLoop(MyParam.common_param.time_merge_image, ProcessMergeFrame).ContinueWith((a) =>
             {
                 //MyLib.ShowDlgInfor($"Done task merge image!");
                 Console.WriteLine("Done task merge image!");
@@ -49,7 +49,7 @@ namespace CTTV_VisionInspection.Common
 
 
         
-        static void UpdatePLCRegister()
+        static void ProcessMergeFrame()
         {
             if (MyParam.camera == null)
             {
@@ -161,7 +161,7 @@ namespace CTTV_VisionInspection.Common
         }
 
         #endregion
-
+          
 
 
         #region task loop -> ScanIO
@@ -243,15 +243,16 @@ namespace CTTV_VisionInspection.Common
 
             }
 
+            //tuanna-todo: check here
             //test
-            if(trigger_status == true)
-            {
-                MyLib.StartGetFrame();
-            }    
-            else
-            {
-                MyLib.StopGetFrame();
-            }
+            //if(trigger_status == true)
+            //{
+            //    MyLib.StartGetFrame();
+            //}    
+            //else
+            //{
+            //    MyLib.StopGetFrame();
+            //}
         }
 
         #endregion

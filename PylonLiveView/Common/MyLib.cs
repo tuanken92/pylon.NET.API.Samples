@@ -717,7 +717,7 @@ namespace CTTV_VisionInspection.Common
             }
         }
 
-        static bool isStartFrame = false;
+        public static bool isStartFrame = false;
         public static void StartGetFrame()
         {
             if(isStartFrame)
